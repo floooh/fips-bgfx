@@ -37,26 +37,34 @@ fips_begin_lib(bgfx)
     fips_files(
         bgfx.cpp bgfx_p.h 
         charset.h config.h
-        glcontext_egl.cpp glcontext_egl.h
-        glcontext_glx.cpp glcontext_glx.h
-        glcontext_ppapi.cpp glcontext_ppapi.h
-        glcontext_wgl.cpp glcontext_wgl.h
         glimports.h
         image.cpp image.h
         ovr.cpp ovr.h
         renderdoc.cpp renderdoc.h
         renderer.h
+        renderer_null.cpp
+        vertexdecl.cpp vertexdecl.h
+
+        # hmm looks like these files must be included
+        # on all platforms, otherwise linker errors 
+        # from Bgfx::s_rendererCreator result:
+        renderer_gl.cpp renderer_gl.h
         renderer_d3d11.cpp renderer_d3d11.h
         renderer_d3d12.cpp
         renderer_d3d9.cpp renderer_d3d9.h
-        renderer_gl.cpp renderer_gl.h
-        renderer_null.cpp
-        vertexdecl.cpp vertexdecl.h
     )
     if (FIPS_MACOS)
         fips_files(glcontext_nsgl.mm glcontext_nsgl.h)
-    elseif(FIPS_IOS)
+    elseif (FIPS_IOS)
         fips_files(glcontext_eagl.mm glcontext_eagl.h)
+    elseif (FIPS_LINUX)
+        fips_files(glcontext_glx.cpp glcontext_glx.h)
+    elseif (FIPS_PNACL)
+        fips_files(glcontext_ppapi.cpp glcontext_ppapi.h)
+    elseif (FIPS_WINDOWS)
+        fips_files(glcontext_wgl.cpp glcontext_wgl.h)
+    else()
+        fips_files(glcontext_egl.cpp glcontext_egl.h)
     endif()
     fips_dir(bgfx/include)
     fips_files(
@@ -94,20 +102,24 @@ fips_begin_lib(bgfx-examples-common)
         cmd.cpp cmd.h
         dbg.cpp dbg.h
         entry.cpp entry.h entry_p.h
-        entry_android.cpp
-        entry_asmjs.cpp
-        entry_nacl.cpp
-        entry_qnx.cpp
-        entry_sdl.cpp
-        entry_windows.cpp
-        entry_winrt.cpp
-        entry_x11.cpp
         input.cpp input.h
     )
-    if (FIPS_MACOS)
+    if (FIPS_ANDROID)
+        fips_files(entry_android.cpp)
+    elseif (FIPS_EMSCRIPTEN)
+        fips_files(entry_asmjs.cpp)
+    elseif (FIPS_PNACL)
+        fips_files(entry_nacl.cpp)
+    elseif (FIPS_WINDOWS)
+        fips_files(entry_windows.cpp)
+    elseif (FIPS_LINUX)
+        fips_files(entry_x11.cpp)
+    elseif (FIPS_MACOS)
         fips_files(entry_osx.mm)
     elseif (FIPS_IOS)
         fips_files(entry_ios.mm)
+    else()
+        fips_files(entry_qnx.cpp entry_sdl.cpp entry_winrt.cpp)
     endif()
 fips_end_lib()
 
