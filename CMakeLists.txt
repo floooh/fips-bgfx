@@ -1,19 +1,19 @@
 #
 # project: fips-bgfx
 #
-cmake_minimum_required(VERSION 2.8)
 
-# include the fips main cmake file
-get_filename_component(FIPS_ROOT_DIR "../fips" ABSOLUTE)
-include("${FIPS_ROOT_DIR}/cmake/fips.cmake")
+if (NOT FIPS_IMPORT)
+    cmake_minimum_required(VERSION 2.8)
+    get_filename_component(FIPS_ROOT_DIR "../fips" ABSOLUTE)
+    include("${FIPS_ROOT_DIR}/cmake/fips.cmake")
+    fips_setup()
+    fips_project(fips-bgfx)
+endif()
 
 #-------------------------------------------------------------------------------
 # it looks like bgfx can auto-detect all C preprocessor defines,
 # for those that are tweakable, cmake options should be defined here
 #
-
-#-------------------------------------------------------------------------------
-fips_setup()
 
 include_directories(bx/include bgfx/include)
 if (FIPS_MACOS)
@@ -25,8 +25,6 @@ elseif (FIPS_PNACL)
 elseif (FIPS_WINDOWS)
     include_directories(bx/include/compat/msvc)
 endif()
-
-fips_project(fips-bgfx)
 
 #-------------------------------------------------------------------------------
 fips_begin_lib(bgfx)
@@ -137,6 +135,8 @@ fips_begin_lib(bgfx-3rdparty)
 fips_end_lib()
 
 #-------------------------------------------------------------------------------
+if (NOT FIPS_IMPORT)
+
 fips_begin_app(00-helloworld windowed)
     include_directories(bgfx/examples/common)
     fips_dir(bgfx/examples/00-helloworld)
@@ -144,6 +144,10 @@ fips_begin_app(00-helloworld windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_finish()
+endif() # NOT FIPS_IMPORT
+
+if (NOT FIPS_IMPORT)
+    fips_finish()
+endif()
 
 
