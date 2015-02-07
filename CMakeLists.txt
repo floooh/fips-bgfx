@@ -78,7 +78,7 @@ fips_begin_lib(bgfx)
     if (FIPS_WINDOWS)
         fips_libs(opengl32)
     elseif (FIPS_LINUX)
-        fips_libx(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL)
+        fips_libs(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL)
     elseif (FIPS_ANDROID)
         # FIXME!
     endif()
