@@ -2,6 +2,54 @@
 # fips-bgfx
 #
 ---
+
+# demos which load data at runtime need to start in the right directory:
+run:
+    01-cubes:
+        cwd: bgfx/examples/runtime
+    03-raymarch:
+        cwd: bgfx/examples/runtime
+    04-mesh:
+        cwd: bgfx/examples/runtime
+    05-instancing:
+        cwd: bgfx/examples/runtime
+    06-bump:
+        cwd: bgfx/examples/runtime
+    07-callback:
+        cwd: bgfx/examples/runtime
+    08-update:
+        cwd: bgfx/examples/runtime
+    09-hdr:
+        cwd: bgfx/examples/runtime
+    10-font:
+        cwd: bgfx/examples/runtime
+    11-fontsdf:
+        cwd: bgfx/examples/runtime
+    12-lod:
+        cwd: bgfx/examples/runtime
+    13-stencil:
+        cwd: bgfx/examples/runtime
+    14-shadowvolumes:
+        cwd: bgfx/examples/runtime
+    15-shadowmaps-simple:
+        cwd: bgfx/examples/runtime
+    16-shadowmaps:
+        cwd: bgfx/examples/runtime
+    18-ibl:
+        cwd: bgfx/examples/runtime
+    19-oit:
+        cwd: bgfx/examples/runtime
+    20-nanovg:
+        cwd: bgfx/examples/runtime
+    21-deferred:
+        cwd: bgfx/examples/runtime
+    22-windowed:
+        cwd: bgfx/examples/runtime
+    23-vectordisplay:
+        cwd: bgfx/examples/runtime
+    24-nbody:
+        cwd: bgfx/examples/runtime
+
 # IMPORTS:
 # ========
 # imports:
