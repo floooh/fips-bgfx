@@ -5,12 +5,14 @@ fipsified version of bgfx (https://github.com/bkaradzic/bgfx)
 
 #### Get fips and clone fips-bgfx:
 
+```bash
 > mkdir fips-workspace
 > cd fips-workspace
 > git clone git@github.com:floooh/fips.git
 > cd fips
 > ./fips clone fips-bgfx
 > cd ../fips-bgfx
+```
 
 #### Build and run on command line:
 
