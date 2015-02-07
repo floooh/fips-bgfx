@@ -3,13 +3,21 @@ fipsified version of bgfx (https://github.com/bkaradzic/bgfx)
 
 **ONLY TESTED ON OSX SO FAR!**
 
+#### Get fips and clone fips-bgfx:
+
+> mkdir fips-workspace
+> cd fips-workspace
+> git clone git@github.com:floooh/fips.git
+> cd fips
+> ./fips clone fips-bgfx
+> cd ../fips-bgfx
+
 #### Build and run on command line:
 
 Build a debug config with xcodebuild (the default build
 config on OSX):
 
 ```bash
-> cd fips-bgfx
 > ./fips build
 > ./fips list targets
 > ./fips run 00-helloworld
@@ -20,7 +28,6 @@ config on OSX):
 ### Nicer command line builds with make or ninja:
 
 ```bash
-> cd fips-bgfx
 # with make:
 > ./fips set config osx-make-release
 > ./fips build
@@ -36,7 +43,6 @@ config on OSX):
 ### Work in Xcode:
 
 ```bash
-> cd fips-bgfx
 > ./fips unset config
 > ./fips open
 [this should open Xcode and load the fips-bgfx project]
@@ -55,7 +61,6 @@ working directory to be set.
 Only one sample currently works on emscripten, '17-drawstress':
 
 ```bash
-> cd fips-bgfx
 # setup emscripten SDK for fips if not done before:
 > ./fips setup emscripten
 # check if all required tools are there (e.g. python2):
