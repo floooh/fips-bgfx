@@ -68,4 +68,10 @@ run:
 #         dep1: src/dep1
 #         ...
 
-
+exports:
+    header-dirs:
+        - bgfx/include
+        - bx/include
+        - bgfx/examples/common
+    modules:
+        bgfx: .

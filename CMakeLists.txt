@@ -10,6 +10,9 @@ if (NOT FIPS_IMPORT)
     fips_project(fips-bgfx)
 endif()
 
+
+option(BGFX_DISABLE_3RDPARTY "BGFX: Disable 3rd party lib" OFF)
+
 #-------------------------------------------------------------------------------
 # it looks like bgfx can auto-detect all C preprocessor defines,
 # for those that are tweakable, cmake options should be defined here
@@ -33,7 +36,7 @@ fips_begin_lib(bgfx)
     # note: add all files to the build process, bgfx knows
     # itself what to compile on each platform
     fips_files(
-        bgfx.cpp bgfx_p.h 
+        bgfx.cpp bgfx_p.h
         charset.h config.h
         glimports.h
         image.cpp image.h
@@ -44,12 +47,13 @@ fips_begin_lib(bgfx)
         vertexdecl.cpp vertexdecl.h
 
         # hmm looks like these files must be included
-        # on all platforms, otherwise linker errors 
+        # on all platforms, otherwise linker errors
         # from Bgfx::s_rendererCreator result:
         renderer_gl.cpp renderer_gl.h
         renderer_d3d11.cpp renderer_d3d11.h
         renderer_d3d12.cpp
         renderer_d3d9.cpp renderer_d3d9.h
+        renderer_vk.cpp
     )
     if (FIPS_MACOS)
         fips_files(glcontext_nsgl.mm glcontext_nsgl.h)
@@ -160,6 +164,8 @@ fips_begin_lib(bgfx-examples-common)
 fips_end_lib()
 
 #-------------------------------------------------------------------------------
+if (NOT BGFX_DISABLE_3RDPARTY)
+
 fips_begin_lib(bgfx-3rdparty)
     fips_dir(bgfx/3rdparty/ib-compress GROUP "ib-compress")
     fips_files(
@@ -173,6 +179,8 @@ fips_begin_lib(bgfx-3rdparty)
     fips_dir(bgfx/3rdparty/ocornut-imgui GROUP "ocornut-imgui")
     fips_files(imgui.cpp imgui.h imconfig.h)
 fips_end_lib()
+
+endif()
 
 #-------------------------------------------------------------------------------
 if (NOT FIPS_IMPORT)
@@ -201,13 +209,13 @@ fips_begin_app(02-metaballs windowed)
     # see fips-generators/BgfxShaderEmbedded.py for open issues
     fips_files(fs_metaballs.sc fs_metaballs.bin.h)
     fips_files(vs_metaballs.sc vs_metaballs.bin.h)
-    #fips_generate(FROM fs_metaballs.sc 
-    #              TYPE BgfxShaderEmbedded 
-    #              HEADER fs_metaballs.bin.h 
+    #fips_generate(FROM fs_metaballs.sc
+    #              TYPE BgfxShaderEmbedded
+    #              HEADER fs_metaballs.bin.h
     #              ARGS "{ type: fragment }")
-    #fips_generate(FROM vs_metaballs.sc 
-    #              TYPE BgfxShaderEmbedded 
-    #              HEADER vs_metaballs.bin.h 
+    #fips_generate(FROM vs_metaballs.sc
+    #              TYPE BgfxShaderEmbedded
+    #              HEADER vs_metaballs.bin.h
     #              ARGS "{ type: vertex }")
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
@@ -234,19 +242,19 @@ fips_begin_app(06-bump windowed)
     fips_dir(bgfx/examples/06-bump GROUP ".")
     fips_files(bump.cpp fs_bump.sc vs_bump.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
-fips_end_app()  
+fips_end_app()
 
 fips_begin_app(07-callback windowed)
     fips_dir(bgfx/examples/07-callback GROUP ".")
     fips_files(callback.cpp fs_callback.sc vs_callback.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
-fips_end_app()  
+fips_end_app()
 
 fips_begin_app(08-update windowed)
     fips_dir(bgfx/examples/08-update GROUP ".")
     fips_files(update.cpp fs_update.sc fs_update_cmp.sc vs_update.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
-fips_end_app()  
+fips_end_app()
 
 fips_begin_app(09-hdr windowed)
     fips_dir(bgfx/examples/09-hdr GROUP ".")
