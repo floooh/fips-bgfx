@@ -188,20 +188,20 @@ if (NOT FIPS_IMPORT)
 fips_ide_group(Samples)
 fips_include_directories(bgfx/examples/common)
 
-fips_begin_app(00-helloworld windowed)
+fips_begin_app(00-helloworld cmdline)
     fips_dir(bgfx/examples/00-helloworld GROUP ".")
     fips_files(helloworld.cpp logo.h screenshot.png)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(01-cubes windowed)
+fips_begin_app(01-cubes cmdline)
     fips_dir(bgfx/examples/01-cubes GROUP ".")
     fips_files(cubes.cpp screenshot.png)
     fips_files(fs_cubes.sc vs_cubes.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(02-metaballs windowed)
+fips_begin_app(02-metaballs cmdline)
     fips_dir(bgfx/examples/02-metaballs GROUP ".")
     fips_files(metaballs.cpp screenshot.png)
 
@@ -220,43 +220,43 @@ fips_begin_app(02-metaballs windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(03-raymarch windowed)
+fips_begin_app(03-raymarch cmdline)
     fips_dir(bgfx/examples/03-raymarch GROUP ".")
     fips_files(raymarch.cpp fs_raymarching.sc vs_raymarching.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(04-mesh windowed)
+fips_begin_app(04-mesh cmdline)
     fips_dir(bgfx/examples/04-mesh GROUP ".")
     fips_files(mesh.cpp fs_mesh.sc vs_mesh.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(05-instancing windowed)
+fips_begin_app(05-instancing cmdline)
     fips_dir(bgfx/examples/05-instancing GROUP ".")
     fips_files(instancing.cpp fs_instancing.sc vs_instancing.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(06-bump windowed)
+fips_begin_app(06-bump cmdline)
     fips_dir(bgfx/examples/06-bump GROUP ".")
     fips_files(bump.cpp fs_bump.sc vs_bump.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(07-callback windowed)
+fips_begin_app(07-callback cmdline)
     fips_dir(bgfx/examples/07-callback GROUP ".")
     fips_files(callback.cpp fs_callback.sc vs_callback.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(08-update windowed)
+fips_begin_app(08-update cmdline)
     fips_dir(bgfx/examples/08-update GROUP ".")
     fips_files(update.cpp fs_update.sc fs_update_cmp.sc vs_update.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(09-hdr windowed)
+fips_begin_app(09-hdr cmdline)
     fips_dir(bgfx/examples/09-hdr GROUP ".")
     fips_files(hdr.cpp)
     fips_files(fs_hdr_blur.sc fs_hdr_bright.sc
@@ -270,25 +270,25 @@ fips_begin_app(09-hdr windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(10-font windowed)
+fips_begin_app(10-font cmdline)
     fips_dir(bgfx/examples/10-font GROUP ".")
     fips_files(font.cpp)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(11-fontsdf windowed)
+fips_begin_app(11-fontsdf cmdline)
     fips_dir(bgfx/examples/11-fontsdf GROUP ".")
     fips_files(fontsdf.cpp)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(12-lod windowed)
+fips_begin_app(12-lod cmdline)
     fips_dir(bgfx/examples/12-lod GROUP ".")
     fips_files(lod.cpp fs_tree.sc vs_tree.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(13-stencil windowed)
+fips_begin_app(13-stencil cmdline)
     fips_dir(bgfx/examples/13-stencil GROUP ".")
     fips_files(stencil.cpp)
     fips_files(fs_stencil_color_black.sc fs_stencil_color_lightning.sc
@@ -300,7 +300,7 @@ fips_begin_app(13-stencil windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(14-shadowvolumes windowed)
+fips_begin_app(14-shadowvolumes cmdline)
     fips_dir(bgfx/examples/14-shadowvolumes GROUP ".")
     fips_files(
         fs_shadowvolume_color_lightning.sc
@@ -331,7 +331,7 @@ fips_begin_app(14-shadowvolumes windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(15-shadowmaps-simple windowed)
+fips_begin_app(15-shadowmaps-simple cmdline)
     fips_dir(bgfx/examples/15-shadowmaps-simple GROUP ".")
     fips_files(
         fs_sms_mesh.sc
@@ -348,7 +348,7 @@ fips_begin_app(15-shadowmaps-simple windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(16-shadowmaps windowed)
+fips_begin_app(16-shadowmaps cmdline)
     fips_dir(bgfx/examples/16-shadowmaps GROUP ".")
     fips_files(
         fs_shadowmaps_color_black.sc
@@ -411,7 +411,7 @@ fips_begin_app(16-shadowmaps windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(17-drawstress windowed)
+fips_begin_app(17-drawstress cmdline)
     fips_dir(bgfx/examples/17-drawstress GROUP ".")
     fips_files(drawstress.cpp)
     fips_files(fs_drawstress.sc fs_drawstress.bin.h)
@@ -419,7 +419,7 @@ fips_begin_app(17-drawstress windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(18-ibl windowed)
+fips_begin_app(18-ibl cmdline)
     fips_dir(bgfx/examples/18-ibl GROUP ".")
     fips_files(
         fs_ibl_mesh.sc
@@ -431,7 +431,7 @@ fips_begin_app(18-ibl windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(19-oit windowed)
+fips_begin_app(19-oit cmdline)
     fips_dir(bgfx/examples/19-oit GROUP ".")
     fips_files(
         fs_oit.sc
@@ -446,13 +446,13 @@ fips_begin_app(19-oit windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(20-nanovg windowed)
+fips_begin_app(20-nanovg cmdline)
     fips_dir(bgfx/examples/20-nanovg GROUP ".")
     fips_files(nanovg.cpp blendish.h)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(21-deferred windowed)
+fips_begin_app(21-deferred cmdline)
     fips_dir(bgfx/examples/21-deferred GROUP ".")
     fips_files(
         deferred.cpp
@@ -470,13 +470,13 @@ fips_begin_app(21-deferred windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(22-windowed windowed)
+fips_begin_app(22-cmdline cmdline)
     fips_dir(bgfx/examples/22-windows GROUP ".")
     fips_files(windows.cpp)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(23-vectordisplay windowed)
+fips_begin_app(23-vectordisplay cmdline)
     fips_dir(bgfx/examples/23-vectordisplay GROUP ".")
     fips_files(
         fs_vectordisplay_blit.sc
@@ -490,7 +490,7 @@ fips_begin_app(23-vectordisplay windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(24-nbody windowed)
+fips_begin_app(24-nbody cmdline)
     fips_dir(bgfx/examples/24-nbody GROUP ".")
     fips_files(
         cs_init_instances.sc
@@ -503,6 +503,13 @@ fips_begin_app(24-nbody windowed)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
+fips_begin_app(25-c99 cmdline)
+    fips_dir(bgfx/examples/25-c99 GROUP ".")
+    fips_files(
+        helloworld.c
+    )
+    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+fips_end_app()
 endif() # NOT FIPS_IMPORT
 
 if (NOT FIPS_IMPORT)
