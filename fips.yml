@@ -57,6 +57,5 @@ exports:
         - bgfx/include
         - bgfx/examples/common
         - bx/include
-        - bx/include/compat/msvc
     modules:
         bgfx: .
