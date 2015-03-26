@@ -55,7 +55,8 @@ run:
 exports:
     header-dirs:
         - bgfx/include
-        - bx/include
         - bgfx/examples/common
+        - bx/include
+        - bx/include/compat/msvc
     modules:
         bgfx: .

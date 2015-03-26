@@ -26,6 +26,7 @@ elseif (FIPS_IOS)
 elseif (FIPS_PNACL)
     include_directories(bx/include/compat/nacl)
 elseif (FIPS_WINDOWS)
+    add_definitions(-D__STDC_FORMAT_MACROS)
     include_directories(bx/include/compat/msvc)
 endif()
 
