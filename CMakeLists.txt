@@ -471,7 +471,7 @@ fips_begin_app(21-deferred cmdline)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(22-cmdline cmdline)
+fips_begin_app(22-windows cmdline)
     fips_dir(bgfx/examples/22-windows GROUP ".")
     fips_files(windows.cpp)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)

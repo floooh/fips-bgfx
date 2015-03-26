@@ -43,7 +43,7 @@ run:
         cwd: bgfx/examples/runtime
     21-deferred:
         cwd: bgfx/examples/runtime
-    22-windowed:
+    22-windows:
         cwd: bgfx/examples/runtime
     23-vectordisplay:
         cwd: bgfx/examples/runtime
