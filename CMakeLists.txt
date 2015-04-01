@@ -10,9 +10,6 @@ if (NOT FIPS_IMPORT)
     fips_project(fips-bgfx)
 endif()
 
-
-option(BGFX_DISABLE_3RDPARTY "BGFX: Disable 3rd party lib" OFF)
-
 #-------------------------------------------------------------------------------
 # it looks like bgfx can auto-detect all C preprocessor defines,
 # for those that are tweakable, cmake options should be defined here
@@ -165,7 +162,37 @@ fips_begin_lib(bgfx-examples-common)
 fips_end_lib()
 
 #-------------------------------------------------------------------------------
-if (NOT BGFX_DISABLE_3RDPARTY)
+fips_begin_lib(bgfx-fcpp)
+    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0)
+    include_directories(bgfx/3rdparty/fcpp)
+    fips_dir(bgfx/3rdparty/fcpp)
+    fips_files(cpp1.c cpp2.c cpp3.c cpp4.c cpp5.c cpp6.c)
+fips_end_lib()
+
+fips_begin_lib(bgfx-glsl-optimizer)
+    include_directories(bgfx/3rdparty/glsl-optimizer/include)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src/mesa)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src/mapi)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src/glsl)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src)
+    file(GLOB glsl_sources
+        bgfx/3rdparty/glsl-optimizer/src/glsl/glcpp/*.c
+        bgfx/3rdparty/glsl-optimizer/src/glsl/*.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/*.c
+        bgfx/3rdparty/glsl-optimizer/src/mesa/*.c
+        bgfx/3rdparty/glsl-optimizer/src/mesa/main/*.c
+        bgfx/3rdparty/glsl-optimizer/src/mesa/program/*.c
+        bgfx/3rdparty/glsl-optimizer/src/util/*.c
+    )
+    file(GLOB glsl_sources_remove
+        bgfx/3rdparty/glsl-optimizer/src/glsl/glcpp/glcpp.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/ir_set_program_inouts.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/main.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/builtin_stubs.cpp
+    )
+    list(REMOVE_ITEM glsl_sources ${glsl_sources_remove})
+    fips_files(${glsl_sources})
+fips_end_lib()
 
 fips_begin_lib(bgfx-3rdparty)
     fips_dir(bgfx/3rdparty/ib-compress GROUP "ib-compress")
@@ -181,6 +208,72 @@ fips_begin_lib(bgfx-3rdparty)
     fips_files(imgui.cpp imgui.h imconfig.h)
 fips_end_lib()
 
+file(GLOB_RECURSE BX_FILES bx/include/bx/*.h bx/include/compat/*.h bx/include/tinystl/*.h)
+fips_files(${BX_FILES} GROUP "bx")
+
+#-------------------------------------------------------------------------------
+
+fips_ide_group(Tools)
+fips_begin_app(shaderc cmdline)
+    fips_include_directories(bgfx/3rdparty/glsl-optimizer/src/glsl)
+    fips_dir(bgfx/tools/shaderc GROUP "shaderc")
+    fips_files(shaderc.cpp shaderc.h shaderc_glsl.cpp shaderc_dx11.cpp shaderc_dx9.cpp)
+    fips_dir(bgfx/src GROUP "bgfx")
+    fips_files(vertexdecl.cpp vertexdecl.h)
+    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common bgfx-fcpp bgfx-glsl-optimizer)
+    if (FIPS_WINDOWS)
+        add_definitions(-D__STDC__ -D__STDC_VERSION=199901L -Dstrdup=_strdup -Dalloca=_alloca -Disascii=__isascii)
+        fips_include_directories(bgfx/3rdparty/glsl-optimizer/include/c99)
+        fips_include_directories($ENV{DXSDK_DIR}/include)
+        fips_libs(d3dx9 d3dcompiler dxguid)
+    endif()
+fips_end_app()
+
+fips_begin_app(texturec cmdline)
+    fips_include_directories(bx/include)
+    fips_include_directories(bgfx/include)
+    fips_include_directories(bgfx/src)
+    fips_dir(bgfx/tools/texturec GROUP "texturec")
+    fips_files(texturec.cpp)
+    fips_dir(bgfx/src GROUP "bgfx")
+    fips_files(image.cpp image.h)
+    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+fips_end_app()
+
+fips_begin_app(geometryc cmdline)
+    fips_include_directories(bx/include)
+    fips_include_directories(bgfx/include)
+    fips_include_directories(bgfx/3rdparty)
+    fips_include_directories(bgfx/examples/common)
+    fips_dir(bgfx/tools/geometryc GROUP "geometryc")
+    fips_files(geometryc.cpp)
+    fips_dir(bgfx/src GROUP "bgfx")
+    fips_files(vertexdecl.cpp vertexdecl.h)
+    fips_dir(bgfx/3rdparty/forsyth-too GROUP "forsyth-too")
+    fips_files(forsythtriangleorderoptimizer.cpp forsythtriangleorderoptimizer.h)
+    fips_dir(bgfx/examples/common GROUP "bounds")
+    fips_files(bounds.cpp bounds.h)
+    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+fips_end_app()
+
+fips_begin_app(makedisttex cmdline)
+    fips_include_directories(bx/include)
+    fips_include_directories(bgfx/3rdparty)
+    fips_dir(bgfx/tools GROUP "makedisttex")
+    fips_files(makedisttex.cpp)
+    fips_dir(bgfx/3rdparty/edtaa3 GROUP "edtaa3")
+    fips_files(edtaa3func.cpp edtaa3func.h)
+    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+fips_end_app()
+
+if (FIPS_CLANG)
+    set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "-Wno-strict-aliasing")
+    set_target_properties(makedisttex PROPERTIES COMPILE_FLAGS "-Wno-missing-field-initializers")
+elseif(FIPS_GCC)
+    set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "-Wno-strict-aliasing")
+    set_target_properties(makedisttex PROPERTIES COMPILE_FLAGS "-Wno-missing-field-initializers")
+elseif(FIPS_MSVC)
+    set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "/wd4152 /wd4204 /wd4242 /wd4244 /wd4668 /wd4996")
 endif()
 
 #-------------------------------------------------------------------------------
