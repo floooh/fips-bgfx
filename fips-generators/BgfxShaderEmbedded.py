@@ -53,7 +53,7 @@ def get_basename(input_path) :
 
 #-------------------------------------------------------------------------------
 def run_shaderc(input_file, out_tmp, platform, type, subtype, bin_name) :
-    cmd = [ 
+    cmd = [
         get_shaderc_path(),
         '-i', get_include_path(),
         '--platform', platform,
@@ -79,8 +79,6 @@ def generate(input_file, out_src, out_hdr) :
     """
 
     if genutil.isDirty(Version, [input_file], [out_hdr]):
-        print input_file + " is DIRTY"
-        print out_hdr + " is BLEH"
         # deduce shader type
         base_file = os.path.basename(input_file)
         shader_type = "vertex"
@@ -109,7 +107,7 @@ def generate(input_file, out_src, out_hdr) :
             contents += f.read()
 
         if os_name == 'windows':
-            run_shaderc(input_file, out_dx9, 'windows', shader_type, 
+            run_shaderc(input_file, out_dx9, 'windows', shader_type,
                     'vs_3_0' if shader_type == 'vertex' else 'ps_3_0', basename+'_dx9')
             run_shaderc(input_file, out_dx11, 'windows', shader_type,
                     'vs_4_0' if shader_type == 'vertex' else 'ps_4_0', basename+'_dx11')
