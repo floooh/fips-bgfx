@@ -12,25 +12,21 @@ import subprocess
 import yaml
 from mod import log
 from mod import util
+from mod import settings
 
 # HACK: Find fips-deploy dir the hard way
 # TODO: Fips need pass to generators the fips-deploy dir ready to be used
-deploy_path = ""
-with open(".fips-settings.yml", 'r') as f:
-    items = yaml.load(f)
-    cfg = {}
-    cfg['name'] = items['config']
-    deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", cfg)
+proj_path = os.path.normpath('{}/..'.format(os.path.dirname(os.path.abspath(__file__))))
+items = settings.load(proj_path)
+deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
 
 #-------------------------------------------------------------------------------
 def get_shaderc_path() :
     """find shaderc compiler, fail if not exists"""
-
     shaderc_path = os.path.abspath('{}/shaderc'.format(deploy_path))
     if not os.path.isfile(shaderc_path) :
-        proj_path = os.path.dirname(os.path.abspath(__file__))
         os_name = platform.system().lower()
-        shaderc_path = '{}/../bgfx/tools/bin/{}/shaderc'.format(proj_path, os_name)
+        shaderc_path = '{}/bgfx/tools/bin/{}/shaderc'.format(proj_path, os_name)
         shaderc_path = os.path.normpath(shaderc_path)
         if not os.path.isfile(shaderc_path) :
             log.error("bgfx shaderc executable not found, please run 'make tools' in bgfx directory")
@@ -40,9 +36,9 @@ def get_shaderc_path() :
 #-------------------------------------------------------------------------------
 def get_include_path() :
     """return the global shader header search path"""
-    proj_path = os.path.dirname(os.path.abspath(__file__))
-    include_path = '{}/../bgfx/src'.format(proj_path)
+    include_path = '{}/bgfx/src'.format(proj_path)
     include_path = os.path.normpath(include_path)
+    print include_path
     if not os.path.isdir(include_path) :
         log.error("could not find bgfx shader include search path at '{}'".format(include_path))
     return include_path
@@ -68,6 +64,7 @@ def run_shaderc(input_file, out_tmp, platform, type, subtype, bin_name) :
         '-o', out_tmp,
         '--bin2c', bin_name
     ])
+    print ' '.join(cmd)
     subprocess.call(cmd)
 
 #-------------------------------------------------------------------------------
@@ -78,14 +75,20 @@ def generate(input_file, out_src, out_hdr) :
     :param out_hdr:     path of output header file
     """
 
-    if genutil.isDirty(Version, [input_file], [out_hdr]):
+    if not os.path.isfile(out_hdr) or genutil.isDirty(Version, [input_file], [out_hdr]):
         # deduce shader type
         base_file = os.path.basename(input_file)
-        shader_type = "vertex"
+        shader_type = None
+        if base_file.startswith("vs_"): 
+            shader_type = "vertex"
         if base_file.startswith("fs_"):
             shader_type = "fragment"
         if base_file.startswith("cs_"):
             shader_type = "compute"
+
+        if not shader_type:
+            log.error("Could not identify shader type, please use prefix vs_, fs_ or cs_ on file " + input_file)
+            return
 
         # source to bgfx shader compiler
         shaderc_path = get_shaderc_path()

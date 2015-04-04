@@ -125,7 +125,7 @@ fips_begin_lib(bgfx)
         renderer_vk.cpp
     )
 
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_clear0.sc
         fs_clear1.sc
         fs_clear2.sc
@@ -184,7 +184,7 @@ fips_begin_lib(bgfx-examples-common)
         cube_atlas.cpp cube_atlas.h
     )
     fips_dir(bgfx/examples/common/imgui GROUP "imgui")
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_imgui_color.sc   vs_imgui_color.sc
         fs_imgui_cubemap.sc vs_imgui_cubemap.sc
         fs_imgui_image.sc   vs_imgui_image.sc
@@ -199,7 +199,7 @@ fips_begin_lib(bgfx-examples-common)
         varying.def.sc
     )
     fips_dir(bgfx/examples/common/nanovg GROUP "nanovg")
-    bgfx_shaders(fs_nanovg_fill.sc vs_nanovg_fill.sc)
+    bgfx_shaders(FILES fs_nanovg_fill.sc vs_nanovg_fill.sc)
     fips_files(
         fontstash.h
         nanovg.cpp nanovg.h
@@ -207,7 +207,7 @@ fips_begin_lib(bgfx-examples-common)
         varying.def.sc
     )
     fips_dir(bgfx/examples/common/font GROUP "font")
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_font_basic.sc
         vs_font_basic.sc
         fs_font_distance_field.sc
@@ -321,56 +321,56 @@ fips_end_app()
 fips_begin_app(02-metaballs cmdline)
     fips_dir(bgfx/examples/02-metaballs GROUP ".")
     fips_files(metaballs.cpp varying.def.sc)
-    bgfx_shaders(fs_metaballs.sc vs_metaballs.sc)
+    bgfx_shaders(FILES fs_metaballs.sc vs_metaballs.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(03-raymarch cmdline)
     fips_dir(bgfx/examples/03-raymarch GROUP ".")
     fips_files(raymarch.cpp varying.def.sc)
-    bgfx_shaders(fs_raymarching.sc vs_raymarching.sc)
+    bgfx_shaders(FILES fs_raymarching.sc vs_raymarching.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(04-mesh cmdline)
     fips_dir(bgfx/examples/04-mesh GROUP ".")
     fips_files(mesh.cpp varying.def.sc)
-    bgfx_shaders(fs_mesh.sc vs_mesh.sc)
+    bgfx_shaders(FILES fs_mesh.sc vs_mesh.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(05-instancing cmdline)
     fips_dir(bgfx/examples/05-instancing GROUP ".")
     fips_files(instancing.cpp varying.def.sc)
-    bgfx_shaders(fs_instancing.sc vs_instancing.sc)
+    bgfx_shaders(FILES fs_instancing.sc vs_instancing.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(06-bump cmdline)
     fips_dir(bgfx/examples/06-bump GROUP ".")
     fips_files(bump.cpp varying.def.sc)
-    bgfx_shaders(fs_bump.sc vs_bump.sc)
+    bgfx_shaders(FILES fs_bump.sc vs_bump.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(07-callback cmdline)
     fips_dir(bgfx/examples/07-callback GROUP ".")
     fips_files(callback.cpp varying.def.sc)
-    bgfx_shaders(fs_callback.sc vs_callback.sc)
+    bgfx_shaders(FILES fs_callback.sc vs_callback.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(08-update cmdline)
     fips_dir(bgfx/examples/08-update GROUP ".")
     fips_files(update.cpp varying.def.sc)
-    bgfx_shaders(fs_update.sc fs_update_cmp.sc vs_update.sc)
+    bgfx_shaders(FILES fs_update.sc fs_update_cmp.sc vs_update.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(09-hdr cmdline)
     fips_dir(bgfx/examples/09-hdr GROUP ".")
     fips_files(hdr.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_hdr_blur.sc    vs_hdr_blur.sc
         fs_hdr_bright.sc  vs_hdr_bright.sc
         fs_hdr_lum.sc     vs_hdr_lum.sc
@@ -397,14 +397,14 @@ fips_end_app()
 fips_begin_app(12-lod cmdline)
     fips_dir(bgfx/examples/12-lod GROUP ".")
     fips_files(lod.cpp varying.def.sc)
-    bgfx_shaders(fs_tree.sc vs_tree.sc)
+    bgfx_shaders(FILES fs_tree.sc vs_tree.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(13-stencil cmdline)
     fips_dir(bgfx/examples/13-stencil GROUP ".")
     fips_files(stencil.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_stencil_color_black.sc
         fs_stencil_color_lightning.sc
         fs_stencil_color_texture.sc
@@ -422,7 +422,7 @@ fips_end_app()
 fips_begin_app(14-shadowvolumes cmdline)
     fips_dir(bgfx/examples/14-shadowvolumes GROUP ".")
     fips_files(shadowvolumes.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_shadowvolume_color_lightning.sc
         fs_shadowvolume_color_texture.sc
         fs_shadowvolume_svbackblank.sc
@@ -453,7 +453,7 @@ fips_end_app()
 fips_begin_app(15-shadowmaps-simple cmdline)
     fips_dir(bgfx/examples/15-shadowmaps-simple GROUP ".")
     fips_files(shadowmaps_simple.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_sms_mesh.sc
         fs_sms_mesh_pd.sc
         fs_sms_shadow.sc
@@ -469,7 +469,7 @@ fips_end_app()
 fips_begin_app(16-shadowmaps cmdline)
     fips_dir(bgfx/examples/16-shadowmaps GROUP ".")
     fips_files(shadowmaps.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_shadowmaps_color_black.sc
         #fs_shadowmaps_color_lightning.sh
         fs_shadowmaps_color_lightning_esm.sc
@@ -532,14 +532,14 @@ fips_end_app()
 fips_begin_app(17-drawstress cmdline)
     fips_dir(bgfx/examples/17-drawstress GROUP ".")
     fips_files(drawstress.cpp varying.def.sc)
-    bgfx_shaders(fs_drawstress.sc vs_drawstress.sc)
+    bgfx_shaders(FILES fs_drawstress.sc vs_drawstress.sc)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(18-ibl cmdline)
     fips_dir(bgfx/examples/18-ibl GROUP ".")
     fips_files(ibl.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_ibl_mesh.sc   vs_ibl_mesh.sc
         fs_ibl_skybox.sc vs_ibl_skybox.sc
     )
@@ -549,7 +549,7 @@ fips_end_app()
 fips_begin_app(19-oit cmdline)
     fips_dir(bgfx/examples/19-oit GROUP ".")
     fips_files(oit.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_oit.sc
         fs_oit_wb.sc
         fs_oit_wb_blit.sc
@@ -570,7 +570,7 @@ fips_end_app()
 fips_begin_app(21-deferred cmdline)
     fips_dir(bgfx/examples/21-deferred GROUP ".")
     fips_files(deferred.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_deferred_combine.sc
         fs_deferred_debug.sc
         fs_deferred_debug_line.sc
@@ -599,7 +599,7 @@ fips_begin_app(23-vectordisplay cmdline)
         vectordisplay.h
         varying.def.sc
     )
-    bgfx_shaders(
+    bgfx_shaders(FILES
         fs_vectordisplay_blit.sc
         fs_vectordisplay_blur.sc
         fs_vectordisplay_fb.sc
@@ -611,7 +611,7 @@ fips_end_app()
 fips_begin_app(24-nbody cmdline)
     fips_dir(bgfx/examples/24-nbody GROUP ".")
     fips_files(nbody.cpp varying.def.sc)
-    bgfx_shaders(
+    bgfx_shaders(FILES
         cs_init_instances.sc
         cs_update_instances.sc
         fs_particle.sc
