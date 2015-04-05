@@ -64,7 +64,7 @@ def run_shaderc(input_file, out_tmp, platform, type, subtype, bin_name) :
         '-o', out_tmp,
         '--bin2c', bin_name
     ])
-    print ' '.join(cmd)
+    #print ' '.join(cmd)
     subprocess.call(cmd)
 
 #-------------------------------------------------------------------------------
