@@ -18,6 +18,8 @@ from mod import settings
 # TODO: Fips need pass to generators the fips-deploy dir ready to be used
 proj_path = os.path.normpath('{}/..'.format(os.path.dirname(os.path.abspath(__file__))))
 items = settings.load(proj_path)
+if not items:
+    items = {'config': settings.get_default('config')}
 deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
 
 #-------------------------------------------------------------------------------
