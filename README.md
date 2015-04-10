@@ -82,14 +82,21 @@ doesn't load immediately.
 
 ### Known Issues
 
-#### No Shader Code Generation
+#### No Shader Code Generation for DirectX on non-Windows platforms
 
-Shader code generation doesn't work yet, there is a started
-code generator script under fips-bgfx/fips-generators, but this
-is relatively useless at the moment because the bgfx shader compiler
-cannot create HLSL shader on non-windows platforms, the result
-would mess up the generated xxx.bin.h files in the source tree, so it's
-currently better to leave shader code generation out of the
-build process.
+Shader code generation doesn't work fully because the bgfx shader
+compiler cannot create HLSL shader on non-windows platforms, the result
+will mess up the generated xxx.bin.h files checked in the source tree,
+so it's better to not commit generated files or generate them on windows
+if there is a need to commit them.
 
+#### Samples
 
+Some samples does not work on all platforms.
+Most specifically Emscripten and PNaCL does not support the following samples:
+
+	- 13-stencil
+	- 14-shadowvolumes
+	- 16-shadowmaps
+
+For missing bx::CtrFileReader or equivalent implementation (see BX_CONFIG_CRT_FILE_READER_WRITER).

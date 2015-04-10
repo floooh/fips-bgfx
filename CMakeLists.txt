@@ -35,7 +35,7 @@ fips_ide_group(Tools)
 fips_begin_app(shaderc cmdline)
     fips_include_directories(bgfx/3rdparty/glsl-optimizer/src/glsl)
     fips_dir(bgfx/tools/shaderc GROUP "shaderc")
-    fips_files(shaderc.cpp shaderc.h shaderc_glsl.cpp shaderc_dx11.cpp shaderc_dx9.cpp)
+    fips_files(shaderc.cpp shaderc.h shaderc_glsl.cpp shaderc_d3d11.cpp shaderc_d3d9.cpp)
     fips_dir(bgfx/src GROUP "bgfx")
     fips_files(vertexdecl.cpp vertexdecl.h)
     fips_deps(bgfx-fcpp bgfx-glsl-optimizer)
@@ -97,13 +97,52 @@ elseif(FIPS_MSVC)
     set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "/wd4152 /wd4204 /wd4242 /wd4244 /wd4668 /wd4996 /wd4291 /WX-")
 endif()
 
+fips_begin_lib(bgfx-fcpp)
+    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0)
+    include_directories(bgfx/3rdparty/fcpp)
+    fips_dir(bgfx/3rdparty/fcpp)
+    fips_files(cpp1.c cpp2.c cpp3.c cpp4.c cpp5.c cpp6.c)
+fips_end_lib()
+
+fips_begin_lib(bgfx-glsl-optimizer)
+    include_directories(bgfx/3rdparty/glsl-optimizer/include)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src/mesa)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src/mapi)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src/glsl)
+    include_directories(bgfx/3rdparty/glsl-optimizer/src)
+    file(GLOB glsl_sources
+        bgfx/3rdparty/glsl-optimizer/src/glsl/glcpp/*.c
+        bgfx/3rdparty/glsl-optimizer/src/glsl/*.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/*.c
+        bgfx/3rdparty/glsl-optimizer/src/mesa/*.c
+        bgfx/3rdparty/glsl-optimizer/src/mesa/main/*.c
+        bgfx/3rdparty/glsl-optimizer/src/mesa/program/*.c
+        bgfx/3rdparty/glsl-optimizer/src/util/*.c
+    )
+    file(GLOB glsl_sources_remove
+        bgfx/3rdparty/glsl-optimizer/src/glsl/glcpp/glcpp.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/ir_set_program_inouts.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/main.cpp
+        bgfx/3rdparty/glsl-optimizer/src/glsl/builtin_stubs.cpp
+    )
+    list(REMOVE_ITEM glsl_sources ${glsl_sources_remove})
+    fips_files(${glsl_sources})
+fips_end_lib()
+
+if (FIPS_MSVC)
+    set_target_properties(bgfx-glsl-optimizer PROPERTIES COMPILE_FLAGS "/wd4291 /WX-")
+endif()
+
 endif() # NOT CMAKE_TOOLCHAIN_FILE
 
 #-------------------------------------------------------------------------------
 fips_ide_group("") # remove grouping
 
 fips_begin_lib(bgfx)
-    include_directories(bgfx/3rdparty bgfx/3rdparty/khronos)
+    if (NOT FIPS_PNACL)
+        include_directories(bgfx/3rdparty/khronos)
+    endif()
+    include_directories(bgfx/3rdparty)
     fips_dir(bgfx/src GROUP "src")
     # note: add all files to the build process, bgfx knows
     # itself what to compile on each platform
@@ -254,42 +293,6 @@ fips_end_lib()
 #-[ 3rdparty ]------------------------------------------------------------------
 fips_ide_group(3rdparty)
 
-fips_begin_lib(bgfx-fcpp)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0)
-    include_directories(bgfx/3rdparty/fcpp)
-    fips_dir(bgfx/3rdparty/fcpp)
-    fips_files(cpp1.c cpp2.c cpp3.c cpp4.c cpp5.c cpp6.c)
-fips_end_lib()
-
-fips_begin_lib(bgfx-glsl-optimizer)
-    include_directories(bgfx/3rdparty/glsl-optimizer/include)
-    include_directories(bgfx/3rdparty/glsl-optimizer/src/mesa)
-    include_directories(bgfx/3rdparty/glsl-optimizer/src/mapi)
-    include_directories(bgfx/3rdparty/glsl-optimizer/src/glsl)
-    include_directories(bgfx/3rdparty/glsl-optimizer/src)
-    file(GLOB glsl_sources
-        bgfx/3rdparty/glsl-optimizer/src/glsl/glcpp/*.c
-        bgfx/3rdparty/glsl-optimizer/src/glsl/*.cpp
-        bgfx/3rdparty/glsl-optimizer/src/glsl/*.c
-        bgfx/3rdparty/glsl-optimizer/src/mesa/*.c
-        bgfx/3rdparty/glsl-optimizer/src/mesa/main/*.c
-        bgfx/3rdparty/glsl-optimizer/src/mesa/program/*.c
-        bgfx/3rdparty/glsl-optimizer/src/util/*.c
-    )
-    file(GLOB glsl_sources_remove
-        bgfx/3rdparty/glsl-optimizer/src/glsl/glcpp/glcpp.cpp
-        bgfx/3rdparty/glsl-optimizer/src/glsl/ir_set_program_inouts.cpp
-        bgfx/3rdparty/glsl-optimizer/src/glsl/main.cpp
-        bgfx/3rdparty/glsl-optimizer/src/glsl/builtin_stubs.cpp
-    )
-    list(REMOVE_ITEM glsl_sources ${glsl_sources_remove})
-    fips_files(${glsl_sources})
-fips_end_lib()
-
-if (FIPS_MSVC)
-    set_target_properties(bgfx-glsl-optimizer PROPERTIES COMPILE_FLAGS "/wd4291 /WX-")
-endif()
-
 fips_begin_lib(bgfx-3rdparty)
     fips_dir(bgfx/3rdparty/ib-compress GROUP "ib-compress")
     fips_files(
@@ -409,6 +412,7 @@ fips_begin_app(12-lod cmdline)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
+if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
 fips_begin_app(13-stencil cmdline)
     fips_dir(bgfx/examples/13-stencil GROUP ".")
     fips_files(stencil.cpp varying.def.sc)
@@ -426,7 +430,9 @@ fips_begin_app(13-stencil cmdline)
     )
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
+endif()
 
+if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
 fips_begin_app(14-shadowvolumes cmdline)
     fips_dir(bgfx/examples/14-shadowvolumes GROUP ".")
     fips_files(shadowvolumes.cpp varying.def.sc)
@@ -457,6 +463,7 @@ fips_begin_app(14-shadowvolumes cmdline)
     )
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
+endif()
 
 fips_begin_app(15-shadowmaps-simple cmdline)
     fips_dir(bgfx/examples/15-shadowmaps-simple GROUP ".")
@@ -474,6 +481,7 @@ fips_begin_app(15-shadowmaps-simple cmdline)
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
 
+if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
 fips_begin_app(16-shadowmaps cmdline)
     fips_dir(bgfx/examples/16-shadowmaps GROUP ".")
     fips_files(shadowmaps.cpp varying.def.sc)
@@ -536,6 +544,7 @@ fips_begin_app(16-shadowmaps cmdline)
     )
     fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
 fips_end_app()
+endif()
 
 fips_begin_app(17-drawstress cmdline)
     fips_dir(bgfx/examples/17-drawstress GROUP ".")
