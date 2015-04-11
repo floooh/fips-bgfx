@@ -40,7 +40,6 @@ def get_include_path() :
     """return the global shader header search path"""
     include_path = '{}/bgfx/src'.format(proj_path)
     include_path = os.path.normpath(include_path)
-    print include_path
     if not os.path.isdir(include_path) :
         log.error("could not find bgfx shader include search path at '{}'".format(include_path))
     return include_path
@@ -81,7 +80,7 @@ def generate(input_file, out_src, out_hdr) :
         # deduce shader type
         base_file = os.path.basename(input_file)
         shader_type = None
-        if base_file.startswith("vs_"): 
+        if base_file.startswith("vs_"):
             shader_type = "vertex"
         if base_file.startswith("fs_"):
             shader_type = "fragment"
