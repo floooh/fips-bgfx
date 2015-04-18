@@ -319,7 +319,8 @@ fips_begin_lib(bgfx-3rdparty)
 fips_end_lib()
 
 file(GLOB_RECURSE BX_FILES bx/include/bx/*.h bx/include/compat/*.h bx/include/tinystl/*.h)
-fips_files(${BX_FILES} GROUP "bx")
+fips_files(${BX_FILES})
+source_group("bx" FILES ${BX_FILES})
 
 #-[ Samples ]-------------------------------------------------------------------
 if (NOT FIPS_IMPORT)
