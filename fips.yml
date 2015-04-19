@@ -5,6 +5,14 @@
 
 # demos which load data at runtime need to start in the right directory:
 run:
+    shaderc:
+        cwd: .
+    texturec:
+        cwd: .
+    geometryc:
+        cwd: .
+    makedisttex:
+        cwd: .
     01-cubes:
         cwd: bgfx/examples/runtime
     03-raymarch:
