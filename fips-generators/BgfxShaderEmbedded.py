@@ -16,22 +16,31 @@ from mod import settings
 
 # HACK: Find fips-deploy dir the hard way
 # TODO: Fips need pass to generators the fips-deploy dir ready to be used
+os_name = platform.system().lower()
+extension = ""
 proj_path = os.path.normpath('{}/..'.format(os.path.dirname(os.path.abspath(__file__))))
 items = settings.load(proj_path)
 if not items:
     items = {'config': settings.get_default('config')}
-deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
+
+# HACK: even setting PROJECT in fips_setup does not work here without a way to get the
+# fips-deploy path, so we force to search in Project for windows as it is the default
+if os_name == "windows":
+    extension = ".exe"
+    deploy_path = util.get_deploy_dir("../fips", "Project", {'name': items['config']})
+else:
+    deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
 
 #-------------------------------------------------------------------------------
 def get_shaderc_path() :
     """find shaderc compiler, fail if not exists"""
-    shaderc_path = os.path.abspath('{}/shaderc'.format(deploy_path))
+    shaderc_path = os.path.abspath('{}/shaderc{}'.format(deploy_path, extension))
     if not os.path.isfile(shaderc_path) :
         os_name = platform.system().lower()
-        shaderc_path = '{}/bgfx/tools/bin/{}/shaderc'.format(proj_path, os_name)
+        shaderc_path = '{}/bgfx/tools/bin/{}/shaderc{}'.format(proj_path, os_name, extension)
         shaderc_path = os.path.normpath(shaderc_path)
         if not os.path.isfile(shaderc_path) :
-            log.error("bgfx shaderc executable not found, please run 'make tools' in bgfx directory")
+            log.error("bgfx shaderc executable not found, please run 'make tools' in bgfx directory: ", shaderc_path)
 
     return shaderc_path
 
@@ -105,7 +114,7 @@ def generate(input_file, out_src, out_hdr) :
         # thus we would get incomplete .bin.h files on non-windows platforms...
         contents = ""
 
-        os_name = platform.system().lower()
+        print "Compiling", os.path.basename(input_file), "..."
         run_shaderc(input_file, out_glsl, 'linux', shader_type, None, basename+'_glsl')
         with open(out_glsl, 'r') as f:
             contents += f.read()
