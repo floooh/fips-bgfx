@@ -25,11 +25,17 @@ deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config
 #-------------------------------------------------------------------------------
 def get_shaderc_path() :
     """find shaderc compiler, fail if not exists"""
-    shaderc_path = os.path.abspath('{}/shaderc'.format(deploy_path))
+    shaderc_ext = ''
+    if platform.system().lower() == 'windows':
+        shaderc_ext += '.exe'
+            
+    shaderc_path = os.path.abspath('{}/shaderc'.format(deploy_path) + shaderc_ext)
+    
     if not os.path.isfile(shaderc_path) :
         os_name = platform.system().lower()
         shaderc_path = '{}/bgfx/tools/bin/{}/shaderc'.format(proj_path, os_name)
-        shaderc_path = os.path.normpath(shaderc_path)
+        shaderc_path = os.path.normpath(shaderc_path) + shaderc_ext
+        
         if not os.path.isfile(shaderc_path) :
             log.error("bgfx shaderc executable not found, please run 'make tools' in bgfx directory")
 
