@@ -2,7 +2,7 @@
 Wrap BGFX shader compiler as fips code generator (for code-embedded shaders)
 See: bgfx/scripts/shader_embeded.mk
 """
-Version = None
+Version = 1
 
 import os
 import platform
@@ -27,9 +27,8 @@ if not items:
 # fips-deploy path, so we force to search in Project for windows as it is the default
 if os_name == "windows":
     extension = ".exe"
-    deploy_path = util.get_deploy_dir("../fips", "Project", {'name': items['config']})
-else:
-    deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
+
+deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
 
 #-------------------------------------------------------------------------------
 def get_shaderc_path() :
@@ -84,7 +83,6 @@ def generate(input_file, out_src, out_hdr) :
     :param out_src:     must be None
     :param out_hdr:     path of output header file
     """
-
     if not os.path.isfile(out_hdr) or genutil.isDirty(Version, [input_file], [out_hdr]):
         # deduce shader type
         base_file = os.path.basename(input_file)
@@ -114,16 +112,21 @@ def generate(input_file, out_src, out_hdr) :
         # thus we would get incomplete .bin.h files on non-windows platforms...
         contents = ""
 
-        print "Compiling", os.path.basename(input_file), "..."
+        print "Compiling", os.path.basename(input_file), "as", shader_type, "..."
         run_shaderc(input_file, out_glsl, 'linux', shader_type, None, basename+'_glsl')
         with open(out_glsl, 'r') as f:
             contents += f.read()
 
         if os_name == 'windows':
             run_shaderc(input_file, out_dx9, 'windows', shader_type,
-                    'vs_3_0' if shader_type == 'vertex' else 'ps_3_0', basename+'_dx9')
+                    'vs_3_0' if shader_type == 'vertex' else
+                    'cs_5_0' if shader_type == 'compute' else 
+                    'ps_3_0', basename+'_dx9')
+
             run_shaderc(input_file, out_dx11, 'windows', shader_type,
-                    'vs_4_0' if shader_type == 'vertex' else 'ps_4_0', basename+'_dx11')
+                    'vs_4_0' if shader_type == 'vertex' else 
+                    'cs_5_0' if shader_type == 'compute' else
+                    'ps_4_0', basename+'_dx11')
 
             with open(out_dx9, 'r') as f:
                 contents += f.read()
@@ -139,4 +142,5 @@ def generate(input_file, out_src, out_hdr) :
 
         if len(contents):
             with open(out_hdr, 'w') as f:
+                contents = "// #version:{}#\n".format(Version) + contents
                 f.write(contents)
