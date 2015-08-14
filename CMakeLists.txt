@@ -315,7 +315,10 @@ fips_begin_lib(bgfx-3rdparty)
         writebitstream.h
     )
     fips_dir(bgfx/3rdparty/ocornut-imgui GROUP "ocornut-imgui")
-    fips_files(imgui.cpp imgui.h imconfig.h)
+    fips_files(
+        imgui.cpp imgui.h imgui_demo.cpp imgui_draw.cpp imconfig.h imgui_internal.h
+        memory_editor.h stb_rect_pack.h stb_textedit.h stb_truetype.h
+    )
 fips_end_lib()
 
 file(GLOB_RECURSE BX_FILES bx/include/bx/*.h bx/include/compat/*.h bx/include/tinystl/*.h)

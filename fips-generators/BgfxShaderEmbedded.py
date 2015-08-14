@@ -2,7 +2,7 @@
 Wrap BGFX shader compiler as fips code generator (for code-embedded shaders)
 See: bgfx/scripts/shader_embeded.mk
 """
-Version = None
+Version = 1
 
 import os
 import platform
@@ -16,28 +16,32 @@ from mod import settings
 
 # HACK: Find fips-deploy dir the hard way
 # TODO: Fips need pass to generators the fips-deploy dir ready to be used
+os_name = platform.system().lower()
+extension = ""
 proj_path = os.path.normpath('{}/..'.format(os.path.dirname(os.path.abspath(__file__))))
 items = settings.load(proj_path)
 if not items:
     items = {'config': settings.get_default('config')}
+
+# HACK: even setting PROJECT in fips_setup does not work here without a way to get the
+# fips-deploy path, so we force to search in Project for windows as it is the default
+if os_name == "windows":
+    extension = ".exe"
+
 deploy_path = util.get_deploy_dir("../fips", "fips-bgfx", {'name': items['config']})
 
 #-------------------------------------------------------------------------------
 def get_shaderc_path() :
     """find shaderc compiler, fail if not exists"""
-    shaderc_ext = ''
-    if platform.system().lower() == 'windows':
-        shaderc_ext += '.exe'
-            
-    shaderc_path = os.path.abspath('{}/shaderc'.format(deploy_path) + shaderc_ext)
-    
+
+    shaderc_path = os.path.abspath('{}/shaderc{}'.format(deploy_path, extension))
     if not os.path.isfile(shaderc_path) :
         os_name = platform.system().lower()
-        shaderc_path = '{}/bgfx/tools/bin/{}/shaderc'.format(proj_path, os_name)
-        shaderc_path = os.path.normpath(shaderc_path) + shaderc_ext
+        shaderc_path = '{}/bgfx/tools/bin/{}/shaderc{}'.format(proj_path, os_name, extension)
+        shaderc_path = os.path.normpath(shaderc_path)
         
         if not os.path.isfile(shaderc_path) :
-            log.error("bgfx shaderc executable not found, please run 'make tools' in bgfx directory")
+            log.error("bgfx shaderc executable not found, please run 'make tools' in bgfx directory: ", shaderc_path)
 
     return shaderc_path
 
@@ -81,7 +85,6 @@ def generate(input_file, out_src, out_hdr) :
     :param out_src:     must be None
     :param out_hdr:     path of output header file
     """
-
     if not os.path.isfile(out_hdr) or genutil.isDirty(Version, [input_file], [out_hdr]):
         # deduce shader type
         base_file = os.path.basename(input_file)
@@ -111,16 +114,21 @@ def generate(input_file, out_src, out_hdr) :
         # thus we would get incomplete .bin.h files on non-windows platforms...
         contents = ""
 
-        os_name = platform.system().lower()
+        print "Compiling", os.path.basename(input_file), "as", shader_type, "..."
         run_shaderc(input_file, out_glsl, 'linux', shader_type, None, basename+'_glsl')
         with open(out_glsl, 'r') as f:
             contents += f.read()
 
         if os_name == 'windows':
             run_shaderc(input_file, out_dx9, 'windows', shader_type,
-                    'vs_3_0' if shader_type == 'vertex' else 'ps_3_0', basename+'_dx9')
+                    'vs_3_0' if shader_type == 'vertex' else
+                    'cs_5_0' if shader_type == 'compute' else 
+                    'ps_3_0', basename+'_dx9')
+
             run_shaderc(input_file, out_dx11, 'windows', shader_type,
-                    'vs_4_0' if shader_type == 'vertex' else 'ps_4_0', basename+'_dx11')
+                    'vs_4_0' if shader_type == 'vertex' else 
+                    'cs_5_0' if shader_type == 'compute' else
+                    'ps_4_0', basename+'_dx11')
 
             with open(out_dx9, 'r') as f:
                 contents += f.read()
@@ -136,4 +144,5 @@ def generate(input_file, out_src, out_hdr) :
 
         if len(contents):
             with open(out_hdr, 'w') as f:
+                contents = "// #version:{}#\n".format(Version) + contents
                 f.write(contents)
