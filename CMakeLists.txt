@@ -42,7 +42,8 @@ fips_begin_app(shaderc cmdline)
     if (FIPS_WINDOWS)
         add_definitions(-D__STDC__ -D__STDC_VERSION__=199901L -Dstrdup=_strdup -Dalloca=_alloca -Disascii=__isascii)
         fips_include_directories(bgfx/3rdparty/glsl-optimizer/include/c99)
-        include_directories($ENV{DXSDK_DIR}include)
+        #include_directories($ENV{DXSDK_DIR}include)
+        include_directories(bgfx/3rdparty/dxsdk/include)
         set(DXSDK_LIB "$ENV{DXSDK_DIR}Lib\\${FIPS_WINDOWS_PLATFORM_NAME}\\")
         fips_libs(d3dx9 d3dcompiler dxguid)
     endif()
@@ -94,7 +95,9 @@ fips_begin_lib(bgfx-imgui)
     set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "")
     fips_dir(bgfx/3rdparty/ocornut-imgui)
     fips_files(
-        imgui.cpp imgui.h imgui_demo.cpp imgui_draw.cpp imconfig.h imgui_internal.h
+        imgui.cpp imgui.h imgui_demo.cpp imgui_draw.cpp 
+        imgui_wm.cpp imgui_wm.h imgui_node_graph_test.cpp
+        imconfig.h imgui_internal.h
         memory_editor.h stb_rect_pack.h stb_textedit.h stb_truetype.h
     )
 fips_end_lib()
@@ -241,22 +244,28 @@ fips_begin_lib(bgfx)
         bgfx.cpp bgfx_p.h
         charset.h config.h
         glimports.h
+        glcontext_eagl.h glcontext_eagl.mm
+        glcontext_egl.cpp glcontext_egl.h
+        glcontext_glx.cpp glcontext_glx.h
+        glcontext_nsgl.h glcontext_nsgl.mm
+        glcontext_ppapi.cpp glcontext_ppapi.h
+        glcontext_wgl.cpp glcontext_wgl.h
         image.cpp image.h
         ovr.cpp ovr.h
         renderdoc.cpp renderdoc.h
-        renderer.h
-        renderer_null.cpp
+        renderer.h renderer_null.cpp
+        renderer_gl.cpp renderer_gl.h
+        renderer_d3d.h
+        renderer_d3d11.cpp renderer_d3d11.h
+        renderer_d3d12.cpp renderer_d3d12.h
+        renderer_d3d9.cpp renderer_d3d9.h
+        renderer_mtl.h renderer_mtl.mm
+        renderer_vk.cpp
+        shader_dx9bc.cpp shader_dx9bc.h
+        shader_dxbc.cpp shader_dxbc.h
+        shader_spirv.cpp shader_spirv.h
         vertexdecl.cpp vertexdecl.h
         varying.def.sc
-
-        # hmm looks like these files must be included
-        # on all platforms, otherwise linker errors
-        # from Bgfx::s_rendererCreator result:
-        renderer_gl.cpp renderer_gl.h
-        renderer_d3d11.cpp renderer_d3d11.h
-        #renderer_d3d12.cpp
-        renderer_d3d9.cpp renderer_d3d9.h
-        renderer_vk.cpp
     )
 
     bgfx_shaders(FILES
@@ -298,7 +307,7 @@ fips_begin_lib(bgfx)
     # untested, note: OSX and iOS currently
     # automatically link against GL
     if (FIPS_WINDOWS)
-        fips_libs(opengl32)
+        fips_libs(opengl32 psapi)
     elseif (FIPS_LINUX)
         fips_libs(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL dl)
     elseif (FIPS_ANDROID)
@@ -317,6 +326,8 @@ endif()
 
 #-------------------------------------------------------------------------------
 fips_begin_lib(bgfx-examples-common)
+    include_directories(bgfx/3rdparty/dxsdk/include)
+    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS)
     fips_dir(bgfx/examples/common GROUP ".")
     fips_files(
         aviwriter.h
@@ -711,17 +722,20 @@ fips_begin_app(23-vectordisplay cmdline)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(24-nbody cmdline)
-    fips_dir(bgfx/examples/24-nbody GROUP ".")
-    fips_files(nbody.cpp varying.def.sc)
-    bgfx_shaders(FILES
-        cs_init_instances.sc
-        cs_update_instances.sc
-        fs_particle.sc
-        vs_particle.sc
-    )
-    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
-fips_end_app()
+#
+# Need fix compute shader compilation
+#
+#fips_begin_app(24-nbody cmdline)
+#    fips_dir(bgfx/examples/24-nbody GROUP ".")
+#    fips_files(nbody.cpp varying.def.sc)
+#    bgfx_shaders(FILES
+#        cs_init_instances.sc
+#        cs_update_instances.sc
+#        fs_particle.sc
+#        vs_particle.sc
+#    )
+#    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
+#fips_end_app()
 
 fips_begin_app(25-c99 cmdline)
     fips_dir(bgfx/examples/25-c99 GROUP ".")

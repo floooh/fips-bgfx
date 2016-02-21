@@ -1,8 +1,11 @@
 """
 Wrap BGFX shader compiler as fips code generator (for code-embedded shaders)
 See: bgfx/scripts/shader_embeded.mk
+
+Version 2 - Added support to metal shader compilation
+Version 1 - Initial version
 """
-Version = 1
+Version = 2
 
 import os
 import platform
@@ -75,7 +78,7 @@ def run_shaderc(input_file, out_tmp, platform, type, subtype, bin_name) :
         '-o', out_tmp,
         '--bin2c', bin_name
     ])
-    #print ' '.join(cmd)
+    print ' '.join(cmd)
     subprocess.call(cmd)
 
 #-------------------------------------------------------------------------------
@@ -105,10 +108,11 @@ def generate(input_file, out_src, out_hdr) :
         include_path = get_include_path()
         basename = get_basename(input_file)
 
-        # call shader 3 times for glsl, dx9, dx11 into tmp files
+        # call shader 4 times for glsl, dx9, dx11 and metal into tmp files
         out_glsl = tempfile.mktemp(prefix='bgfx_glsl_shaderc_')
         out_dx9  = tempfile.mktemp(prefix='bgfx_dx9_shaderc_')
         out_dx11 = tempfile.mktemp(prefix='bgfx_dx11_shaderc_')
+        out_mtl  = tempfile.mktemp(prefix='bgfx_mtl_shaderc_')
 
         # FIXME: the HLSL compiler is only supported on Windows platforms,
         # thus we would get incomplete .bin.h files on non-windows platforms...
@@ -119,20 +123,22 @@ def generate(input_file, out_src, out_hdr) :
         with open(out_glsl, 'r') as f:
             contents += f.read()
 
+        run_shaderc(input_file, out_mtl, 'ios', shader_type, None, basename+'_mtl')
+        with open(out_mtl, 'r') as f:
+            contents += f.read()
+
         if os_name == 'windows':
-            run_shaderc(input_file, out_dx9, 'windows', shader_type,
+            if shader_type != 'compute':
+                run_shaderc(input_file, out_dx9, 'windows', shader_type,
                     'vs_3_0' if shader_type == 'vertex' else
-                    'cs_5_0' if shader_type == 'compute' else 
                     'ps_3_0', basename+'_dx9')
+                with open(out_dx9, 'r') as f:
+                    contents += f.read()
 
             run_shaderc(input_file, out_dx11, 'windows', shader_type,
                     'vs_4_0' if shader_type == 'vertex' else 
                     'cs_5_0' if shader_type == 'compute' else
                     'ps_4_0', basename+'_dx11')
-
-            with open(out_dx9, 'r') as f:
-                contents += f.read()
-
             with open(out_dx11, 'r') as f:
                 contents += f.read()
         else:
