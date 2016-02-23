@@ -59,6 +59,10 @@ run:
         cwd: bgfx/examples/runtime
     25-c99:
         cwd: bgfx/examples/runtime
+    26-occlusion:
+        cwd: bgfx/examples/runtime
+    27-terrain:
+        cwd: bgfx/examples/runtime
 
 exports:
     header-dirs:

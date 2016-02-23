@@ -45,7 +45,7 @@ fips_begin_app(shaderc cmdline)
         #include_directories($ENV{DXSDK_DIR}include)
         include_directories(bgfx/3rdparty/dxsdk/include)
         set(DXSDK_LIB "$ENV{DXSDK_DIR}Lib\\${FIPS_WINDOWS_PLATFORM_NAME}\\")
-        fips_libs(d3dx9 d3dcompiler dxguid)
+        fips_libs(d3dcompiler dxguid)
     endif()
 fips_end_app()
 
@@ -101,7 +101,7 @@ fips_begin_lib(bgfx-imgui)
 fips_end_lib()
 
 fips_begin_lib(bgfx-ib-compress)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     fips_dir(bgfx/3rdparty/ib-compress)
     fips_files(
         indexbuffercompression.cpp indexbuffercompression.h
@@ -114,13 +114,13 @@ fips_begin_lib(bgfx-ib-compress)
 fips_end_lib()
 
 fips_begin_lib(bgfx-tinyexr)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DMINIZ_NO_TIME)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DMINIZ_NO_TIME)
     fips_dir(bgfx/3rdparty/tinyexr)
     fips_files(tinyexr.cc tinyexr.h)
 fips_end_lib()
 
 fips_begin_lib(bgfx-libsquish)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     fips_dir(bgfx/3rdparty/libsquish)
     fips_files(
         alpha.cpp clusterfit.cpp colourblock.cpp colourfit.cpp colourset.cpp maths.cpp rangefit.cpp 
@@ -129,13 +129,13 @@ fips_begin_lib(bgfx-libsquish)
 fips_end_lib()
 
 fips_begin_lib(bgfx-pvrtc)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     fips_dir(bgfx/3rdparty/pvrtc)
     fips_files(BitScale.cpp MortonTable.cpp PvrTcDecoder.cpp PvrTcEncoder.cpp PvrTcPacket.cpp)
 fips_end_lib()
 
 fips_begin_lib(bgfx-nvtt)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     include_directories(bgfx/3rdparty/nvtt)
     fips_dir(bgfx/3rdparty/nvtt)
     fips_files(
@@ -159,36 +159,37 @@ fips_begin_lib(bgfx-nvtt)
 fips_end_lib()
 
 fips_begin_lib(bgfx-etc1)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     fips_dir(bgfx/3rdparty/etc1)
     fips_files(etc1.cpp etc1.h)
 fips_end_lib()
 
 fips_begin_lib(bgfx-etc2)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     fips_dir(bgfx/3rdparty/etc2)
     fips_files(Tables.cpp ProcessRGB.cpp Math.hpp ProcessCommon.hpp ProcessRGB.hpp Tables.hpp Types.hpp Vector.hpp)
 fips_end_lib()
 
 fips_begin_lib(bgfx-forsyth)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     include_directories(bgfx/3rdparty/forsyth-too)
     fips_dir(bgfx/3rdparty/forsyth-too)
     fips_files(forsythtriangleorderoptimizer.cpp forsythtriangleorderoptimizer.h)
 fips_end_lib()
 
 fips_begin_lib(bgfx-edtaa3)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     include_directories(bgfx/3rdparty/edtaa3)
     fips_dir(bgfx/3rdparty/edtaa3)
     fips_files(edtaa3func.cpp)
 fips_end_lib()
 
 fips_begin_lib(bgfx-fcpp)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUFF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     include_directories(bgfx/3rdparty/fcpp)
     fips_dir(bgfx/3rdparty/fcpp)
     fips_files(cpp1.c cpp2.c cpp3.c cpp4.c cpp5.c cpp6.c)
+    fips_files(cpp.h cppadd.h cppdef.h fpp.h fpp_pragmas.h fpp_protos.h fppbase.h)
 fips_end_lib()
 
 fips_begin_lib(bgfx-glsl-optimizer)
@@ -304,12 +305,16 @@ fips_begin_lib(bgfx)
 
     # untested, note: OSX and iOS currently
     # automatically link against GL
-    if (FIPS_WINDOWS)
+    if (FIPS_MACOS)
+        fips_frameworks_osx(Cocoa IOKit CoreFoundation CoreVideo Carbon OpenGL Metal)
+    elseif (FIPS_WINDOWS)
         fips_libs(opengl32 psapi)
     elseif (FIPS_LINUX)
         fips_libs(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL dl)
     elseif (FIPS_ANDROID)
         # FIXME!
+    elseif (FIPS_IOS)
+        fips_frameworks_osx(OpenGLES GLKit Metal)
     endif()
 fips_end_lib()
 
@@ -325,7 +330,7 @@ endif()
 #-------------------------------------------------------------------------------
 fips_begin_lib(bgfx-examples-common)
     include_directories(bgfx/3rdparty/dxsdk/include)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS)
     fips_dir(bgfx/examples/common GROUP ".")
     fips_files(
         aviwriter.h
@@ -723,17 +728,17 @@ fips_end_app()
 #
 # Need fix compute shader compilation
 #
-#fips_begin_app(24-nbody cmdline)
-#    fips_dir(bgfx/examples/24-nbody GROUP ".")
-#    fips_files(nbody.cpp varying.def.sc)
-#    bgfx_shaders(FILES
-#        cs_init_instances.sc
-#        cs_update_instances.sc
-#        fs_particle.sc
-#        vs_particle.sc
-#    )
-#    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
-#fips_end_app()
+fips_begin_app(24-nbody cmdline)
+    fips_dir(bgfx/examples/24-nbody GROUP ".")
+    fips_files(nbody.cpp varying.def.sc)
+    bgfx_shaders(FILES
+        cs_init_instances.sc
+        cs_update_instances.sc
+        fs_particle.sc
+        vs_particle.sc
+    )
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
+fips_end_app()
 
 fips_begin_app(25-c99 cmdline)
     fips_dir(bgfx/examples/25-c99 GROUP ".")
