@@ -42,9 +42,10 @@ fips_begin_app(shaderc cmdline)
     if (FIPS_WINDOWS)
         add_definitions(-D__STDC__ -D__STDC_VERSION__=199901L -Dstrdup=_strdup -Dalloca=_alloca -Disascii=__isascii)
         fips_include_directories(bgfx/3rdparty/glsl-optimizer/include/c99)
-        include_directories($ENV{DXSDK_DIR}include)
+        #include_directories($ENV{DXSDK_DIR}include)
+        include_directories(bgfx/3rdparty/dxsdk/include)
         set(DXSDK_LIB "$ENV{DXSDK_DIR}Lib\\${FIPS_WINDOWS_PLATFORM_NAME}\\")
-        fips_libs(d3dx9 d3dcompiler dxguid)
+        fips_libs(d3dcompiler dxguid)
     endif()
 fips_end_app()
 
@@ -56,6 +57,7 @@ fips_begin_app(texturec cmdline)
     fips_files(texturec.cpp)
     fips_dir(bgfx/src GROUP "bgfx")
     fips_files(image.cpp image.h)
+    fips_deps(bgfx-edtaa3 bgfx-libsquish bgfx-etc1 bgfx-etc2 bgfx-nvtt bgfx-pvrtc bgfx-tinyexr)
 fips_end_app()
 
 fips_begin_app(geometryc cmdline)
@@ -67,43 +69,127 @@ fips_begin_app(geometryc cmdline)
     fips_files(geometryc.cpp)
     fips_dir(bgfx/src GROUP "bgfx")
     fips_files(vertexdecl.cpp vertexdecl.h)
-    fips_dir(bgfx/3rdparty/forsyth-too GROUP "forsyth-too")
-    fips_files(forsythtriangleorderoptimizer.cpp forsythtriangleorderoptimizer.h)
     fips_dir(bgfx/examples/common GROUP "bounds")
     fips_files(bounds.cpp bounds.h)
-    fips_deps(bgfx-3rdparty)
-fips_end_app()
-
-fips_begin_app(makedisttex cmdline)
-    if (FIPS_WINDOWS)
-        add_definitions(-D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS)
-    endif()
-    fips_include_directories(bx/include)
-    fips_include_directories(bgfx/3rdparty)
-    fips_dir(bgfx/tools GROUP "makedisttex")
-    fips_files(makedisttex.cpp)
-    fips_dir(bgfx/3rdparty/edtaa3 GROUP "edtaa3")
-    fips_files(edtaa3func.cpp edtaa3func.h)
+    fips_deps(bgfx-forsyth bgfx-ib-compress)
 fips_end_app()
 
 if (FIPS_CLANG)
     set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "-Wno-strict-aliasing")
-    set_target_properties(makedisttex PROPERTIES COMPILE_FLAGS "-Wno-missing-field-initializers")
     set_target_properties(texturec PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
 elseif(FIPS_GCC)
     set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "-Wno-strict-aliasing")
-    set_target_properties(makedisttex PROPERTIES COMPILE_FLAGS "-Wno-missing-field-initializers")
     set_target_properties(texturec PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
 elseif(FIPS_MSVC)
     set_target_properties(shaderc PROPERTIES LINK_FLAGS "/LIBPATH:\"${DXSDK_LIB}\\\"")
     set_target_properties(shaderc PROPERTIES COMPILE_FLAGS "/wd4152 /wd4204 /wd4242 /wd4244 /wd4668 /wd4996 /wd4291 /WX-")
 endif()
 
+#-[ 3rd Party Stuff ]-----------------------------------------------------------
+
+fips_ide_group(3rdparty)
+
+fips_begin_lib(bgfx-imgui)
+    set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "")
+    fips_dir(bgfx/3rdparty/ocornut-imgui)
+    fips_files(
+        imgui.cpp imgui.h imgui_demo.cpp imgui_draw.cpp 
+        imgui_wm.cpp imgui_wm.h imgui_node_graph_test.cpp
+        imconfig.h imgui_internal.h
+        memory_editor.h stb_rect_pack.h stb_textedit.h stb_truetype.h
+    )
+fips_end_lib()
+
+fips_begin_lib(bgfx-ib-compress)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    fips_dir(bgfx/3rdparty/ib-compress)
+    fips_files(
+        indexbuffercompression.cpp indexbuffercompression.h
+        indexbuffercompressionformat.h
+        indexbufferdecompression.cpp indexbufferdecompression.h
+        indexcompressionconstants.h
+        readbitstream.h
+        writebitstream.h
+    )
+fips_end_lib()
+
+fips_begin_lib(bgfx-tinyexr)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DMINIZ_NO_TIME)
+    fips_dir(bgfx/3rdparty/tinyexr)
+    fips_files(tinyexr.cc tinyexr.h)
+fips_end_lib()
+
+fips_begin_lib(bgfx-libsquish)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    fips_dir(bgfx/3rdparty/libsquish)
+    fips_files(
+        alpha.cpp clusterfit.cpp colourblock.cpp colourfit.cpp colourset.cpp maths.cpp rangefit.cpp 
+        singlecolourfit.cpp squish.cpp
+    )
+fips_end_lib()
+
+fips_begin_lib(bgfx-pvrtc)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    fips_dir(bgfx/3rdparty/pvrtc)
+    fips_files(BitScale.cpp MortonTable.cpp PvrTcDecoder.cpp PvrTcEncoder.cpp PvrTcPacket.cpp)
+fips_end_lib()
+
+fips_begin_lib(bgfx-nvtt)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    include_directories(bgfx/3rdparty/nvtt)
+    fips_dir(bgfx/3rdparty/nvtt)
+    fips_files(
+        nvtt.cpp
+        nvmath/fitting.cpp
+        bc7/avpcl.cpp
+        bc7/avpcl_mode0.cpp
+        bc7/avpcl_mode1.cpp
+        bc7/avpcl_mode2.cpp
+        bc7/avpcl_mode3.cpp
+        bc7/avpcl_mode4.cpp
+        bc7/avpcl_mode5.cpp
+        bc7/avpcl_mode6.cpp
+        bc7/avpcl_mode7.cpp
+        bc7/avpcl_utils.cpp
+        bc6h/zoh.cpp
+        bc6h/zoh_utils.cpp
+        bc6h/zohone.cpp
+        bc6h/zohtwo.cpp
+    )
+fips_end_lib()
+
+fips_begin_lib(bgfx-etc1)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    fips_dir(bgfx/3rdparty/etc1)
+    fips_files(etc1.cpp etc1.h)
+fips_end_lib()
+
+fips_begin_lib(bgfx-etc2)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    fips_dir(bgfx/3rdparty/etc2)
+    fips_files(Tables.cpp ProcessRGB.cpp Math.hpp ProcessCommon.hpp ProcessRGB.hpp Tables.hpp Types.hpp Vector.hpp)
+fips_end_lib()
+
+fips_begin_lib(bgfx-forsyth)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    include_directories(bgfx/3rdparty/forsyth-too)
+    fips_dir(bgfx/3rdparty/forsyth-too)
+    fips_files(forsythtriangleorderoptimizer.cpp forsythtriangleorderoptimizer.h)
+fips_end_lib()
+
+fips_begin_lib(bgfx-edtaa3)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    include_directories(bgfx/3rdparty/edtaa3)
+    fips_dir(bgfx/3rdparty/edtaa3)
+    fips_files(edtaa3func.cpp)
+fips_end_lib()
+
 fips_begin_lib(bgfx-fcpp)
-    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUF=65536 -DOLD_PREPROCESSOR=0)
+    add_definitions(-DNINCLUDE=64 -DNWORK=65536 -DNBUFF=65536 -DOLD_PREPROCESSOR=0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
     include_directories(bgfx/3rdparty/fcpp)
     fips_dir(bgfx/3rdparty/fcpp)
     fips_files(cpp1.c cpp2.c cpp3.c cpp4.c cpp5.c cpp6.c)
+    fips_files(cpp.h cppadd.h cppdef.h fpp.h fpp_pragmas.h fpp_protos.h fppbase.h)
 fips_end_lib()
 
 fips_begin_lib(bgfx-glsl-optimizer)
@@ -140,6 +226,11 @@ endif() # NOT CMAKE_TOOLCHAIN_FILE
 #-------------------------------------------------------------------------------
 fips_ide_group("") # remove grouping
 
+#
+# BGFX_CONFIG_PROFILER_REMOTERY ?
+# ENTRY_CONFIG_* ?
+#
+
 fips_begin_lib(bgfx)
     if (NOT FIPS_PNACL)
         include_directories(bgfx/3rdparty/khronos)
@@ -152,22 +243,28 @@ fips_begin_lib(bgfx)
         bgfx.cpp bgfx_p.h
         charset.h config.h
         glimports.h
+        glcontext_eagl.h glcontext_eagl.mm
+        glcontext_egl.cpp glcontext_egl.h
+        glcontext_glx.cpp glcontext_glx.h
+        glcontext_nsgl.h glcontext_nsgl.mm
+        glcontext_ppapi.cpp glcontext_ppapi.h
+        glcontext_wgl.cpp glcontext_wgl.h
         image.cpp image.h
         ovr.cpp ovr.h
         renderdoc.cpp renderdoc.h
-        renderer.h
-        renderer_null.cpp
+        renderer.h renderer_null.cpp
+        renderer_gl.cpp renderer_gl.h
+        renderer_d3d.h
+        renderer_d3d11.cpp renderer_d3d11.h
+        renderer_d3d12.cpp renderer_d3d12.h
+        renderer_d3d9.cpp renderer_d3d9.h
+        renderer_mtl.h renderer_mtl.mm
+        renderer_vk.cpp
+        shader_dx9bc.cpp shader_dx9bc.h
+        shader_dxbc.cpp shader_dxbc.h
+        shader_spirv.cpp shader_spirv.h
         vertexdecl.cpp vertexdecl.h
         varying.def.sc
-
-        # hmm looks like these files must be included
-        # on all platforms, otherwise linker errors
-        # from Bgfx::s_rendererCreator result:
-        renderer_gl.cpp renderer_gl.h
-        renderer_d3d11.cpp renderer_d3d11.h
-        renderer_d3d12.cpp
-        renderer_d3d9.cpp renderer_d3d9.h
-        renderer_vk.cpp
     )
 
     bgfx_shaders(FILES
@@ -197,23 +294,27 @@ fips_begin_lib(bgfx)
     else()
         fips_files(glcontext_egl.cpp glcontext_egl.h)
     endif()
-    fips_dir(bgfx/include GROUP "include")
+    fips_dir(bgfx/include/bgfx GROUP "include")
     fips_files(
-        bgfx.c99.h
+        c99/bgfx.h
+        c99/bgfxplatform.h
         bgfx.h
         bgfxdefines.h
-        bgfxplatform.c99.h
         bgfxplatform.h
     )
 
     # untested, note: OSX and iOS currently
     # automatically link against GL
-    if (FIPS_WINDOWS)
-        fips_libs(opengl32)
+    if (FIPS_MACOS)
+        fips_frameworks_osx(Cocoa IOKit CoreFoundation CoreVideo Carbon OpenGL Metal QuartzCore)
+    elseif (FIPS_WINDOWS)
+        fips_libs(opengl32 psapi)
     elseif (FIPS_LINUX)
         fips_libs(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL dl)
     elseif (FIPS_ANDROID)
         # FIXME!
+    elseif (FIPS_IOS)
+        fips_frameworks_osx(OpenGLES GLKit Metal)
     endif()
 fips_end_lib()
 
@@ -228,6 +329,8 @@ endif()
 
 #-------------------------------------------------------------------------------
 fips_begin_lib(bgfx-examples-common)
+    include_directories(bgfx/3rdparty/dxsdk/include)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS)
     fips_dir(bgfx/examples/common GROUP ".")
     fips_files(
         aviwriter.h
@@ -301,25 +404,7 @@ fips_begin_lib(bgfx-examples-common)
     endif()
 fips_end_lib()
 
-#-[ 3rdparty ]------------------------------------------------------------------
-fips_ide_group(3rdparty)
-
-fips_begin_lib(bgfx-3rdparty)
-    fips_dir(bgfx/3rdparty/ib-compress GROUP "ib-compress")
-    fips_files(
-        indexbuffercompression.cpp indexbuffercompression.h
-        indexbuffercompressionformat.h
-        indexbufferdecompression.cpp indexbufferdecompression.h
-        indexcompressionconstants.h
-        readbitstream.h
-        writebitstream.h
-    )
-    fips_dir(bgfx/3rdparty/ocornut-imgui GROUP "ocornut-imgui")
-    fips_files(
-        imgui.cpp imgui.h imgui_demo.cpp imgui_draw.cpp imconfig.h imgui_internal.h
-        memory_editor.h stb_rect_pack.h stb_textedit.h stb_truetype.h
-    )
-fips_end_lib()
+#-[ BX ]------------------------------------------------------------------------
 
 file(GLOB_RECURSE BX_FILES bx/include/bx/*.h bx/include/compat/*.h bx/include/tinystl/*.h)
 fips_files(${BX_FILES})
@@ -334,63 +419,63 @@ fips_include_directories(bgfx/examples/common)
 fips_begin_app(00-helloworld cmdline)
     fips_dir(bgfx/examples/00-helloworld GROUP ".")
     fips_files(helloworld.cpp logo.h)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(01-cubes cmdline)
     fips_dir(bgfx/examples/01-cubes GROUP ".")
     fips_files(cubes.cpp varying.def.sc)
     fips_files(fs_cubes.sc vs_cubes.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(02-metaballs cmdline)
     fips_dir(bgfx/examples/02-metaballs GROUP ".")
     fips_files(metaballs.cpp varying.def.sc)
     bgfx_shaders(FILES fs_metaballs.sc vs_metaballs.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(03-raymarch cmdline)
     fips_dir(bgfx/examples/03-raymarch GROUP ".")
     fips_files(raymarch.cpp varying.def.sc)
     bgfx_shaders(FILES fs_raymarching.sc vs_raymarching.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(04-mesh cmdline)
     fips_dir(bgfx/examples/04-mesh GROUP ".")
     fips_files(mesh.cpp varying.def.sc)
     bgfx_shaders(FILES fs_mesh.sc vs_mesh.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(05-instancing cmdline)
     fips_dir(bgfx/examples/05-instancing GROUP ".")
     fips_files(instancing.cpp varying.def.sc)
     bgfx_shaders(FILES fs_instancing.sc vs_instancing.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(06-bump cmdline)
     fips_dir(bgfx/examples/06-bump GROUP ".")
     fips_files(bump.cpp varying.def.sc)
     bgfx_shaders(FILES fs_bump.sc vs_bump.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(07-callback cmdline)
     fips_dir(bgfx/examples/07-callback GROUP ".")
     fips_files(callback.cpp varying.def.sc)
     bgfx_shaders(FILES fs_callback.sc vs_callback.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(08-update cmdline)
     fips_dir(bgfx/examples/08-update GROUP ".")
     fips_files(update.cpp varying.def.sc)
     bgfx_shaders(FILES fs_update.sc fs_update_cmp.sc vs_update.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(09-hdr cmdline)
@@ -405,26 +490,26 @@ fips_begin_app(09-hdr cmdline)
         fs_hdr_skybox.sc  vs_hdr_skybox.sc
         fs_hdr_tonemap.sc vs_hdr_tonemap.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(10-font cmdline)
     fips_dir(bgfx/examples/10-font GROUP ".")
     fips_files(font.cpp)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(11-fontsdf cmdline)
     fips_dir(bgfx/examples/11-fontsdf GROUP ".")
     fips_files(fontsdf.cpp)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(12-lod cmdline)
     fips_dir(bgfx/examples/12-lod GROUP ".")
     fips_files(lod.cpp varying.def.sc)
     bgfx_shaders(FILES fs_tree.sc vs_tree.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
@@ -433,17 +518,17 @@ fips_begin_app(13-stencil cmdline)
     fips_files(stencil.cpp varying.def.sc)
     bgfx_shaders(FILES
         fs_stencil_color_black.sc
-        fs_stencil_color_lightning.sc
+        fs_stencil_color_lighting.sc
         fs_stencil_color_texture.sc
         fs_stencil_texture.sc
-        fs_stencil_texture_lightning.sc
+        fs_stencil_texture_lighting.sc
         vs_stencil_color.sc
-        vs_stencil_color_lightning.sc
+        vs_stencil_color_lighting.sc
         vs_stencil_color_texture.sc
         vs_stencil_texture.sc
-        vs_stencil_texture_lightning.sc
+        vs_stencil_texture_lighting.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 endif()
 
@@ -452,7 +537,7 @@ fips_begin_app(14-shadowvolumes cmdline)
     fips_dir(bgfx/examples/14-shadowvolumes GROUP ".")
     fips_files(shadowvolumes.cpp varying.def.sc)
     bgfx_shaders(FILES
-        fs_shadowvolume_color_lightning.sc
+        fs_shadowvolume_color_lighting.sc
         fs_shadowvolume_color_texture.sc
         fs_shadowvolume_svbackblank.sc
         fs_shadowvolume_svbackcolor.sc
@@ -467,16 +552,16 @@ fips_begin_app(14-shadowvolumes cmdline)
         fs_shadowvolume_svsidecolor.sc
         fs_shadowvolume_svsidetex.sc
         fs_shadowvolume_texture.sc
-        fs_shadowvolume_texture_lightning.sc
-        vs_shadowvolume_color_lightning.sc
+        fs_shadowvolume_texture_lighting.sc
+        vs_shadowvolume_color_lighting.sc
         vs_shadowvolume_color_texture.sc
         vs_shadowvolume_svback.sc
         vs_shadowvolume_svfront.sc
         vs_shadowvolume_svside.sc
         vs_shadowvolume_texture.sc
-        vs_shadowvolume_texture_lightning.sc
+        vs_shadowvolume_texture_lighting.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 endif()
 
@@ -493,7 +578,7 @@ fips_begin_app(15-shadowmaps-simple cmdline)
         vs_sms_shadow.sc
         vs_sms_shadow_pd.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
@@ -502,32 +587,32 @@ fips_begin_app(16-shadowmaps cmdline)
     fips_files(shadowmaps.cpp varying.def.sc)
     bgfx_shaders(FILES
         fs_shadowmaps_color_black.sc
-        #fs_shadowmaps_color_lightning.sh
-        fs_shadowmaps_color_lightning_esm.sc
-        fs_shadowmaps_color_lightning_esm_csm.sc
-        fs_shadowmaps_color_lightning_esm_linear.sc
-        fs_shadowmaps_color_lightning_esm_linear_csm.sc
-        fs_shadowmaps_color_lightning_esm_linear_omni.sc
-        fs_shadowmaps_color_lightning_esm_omni.sc
-        fs_shadowmaps_color_lightning_hard.sc
-        fs_shadowmaps_color_lightning_hard_csm.sc
-        fs_shadowmaps_color_lightning_hard_linear.sc
-        fs_shadowmaps_color_lightning_hard_linear_csm.sc
-        fs_shadowmaps_color_lightning_hard_linear_omni.sc
-        fs_shadowmaps_color_lightning_hard_omni.sc
-        #fs_shadowmaps_color_lightning_main.sh
-        fs_shadowmaps_color_lightning_pcf.sc
-        fs_shadowmaps_color_lightning_pcf_csm.sc
-        fs_shadowmaps_color_lightning_pcf_linear.sc
-        fs_shadowmaps_color_lightning_pcf_linear_csm.sc
-        fs_shadowmaps_color_lightning_pcf_linear_omni.sc
-        fs_shadowmaps_color_lightning_pcf_omni.sc
-        fs_shadowmaps_color_lightning_vsm.sc
-        fs_shadowmaps_color_lightning_vsm_csm.sc
-        fs_shadowmaps_color_lightning_vsm_linear.sc
-        fs_shadowmaps_color_lightning_vsm_linear_csm.sc
-        fs_shadowmaps_color_lightning_vsm_linear_omni.sc
-        fs_shadowmaps_color_lightning_vsm_omni.sc
+        #fs_shadowmaps_color_lighting.sh
+        fs_shadowmaps_color_lighting_esm.sc
+        fs_shadowmaps_color_lighting_esm_csm.sc
+        fs_shadowmaps_color_lighting_esm_linear.sc
+        fs_shadowmaps_color_lighting_esm_linear_csm.sc
+        fs_shadowmaps_color_lighting_esm_linear_omni.sc
+        fs_shadowmaps_color_lighting_esm_omni.sc
+        fs_shadowmaps_color_lighting_hard.sc
+        fs_shadowmaps_color_lighting_hard_csm.sc
+        fs_shadowmaps_color_lighting_hard_linear.sc
+        fs_shadowmaps_color_lighting_hard_linear_csm.sc
+        fs_shadowmaps_color_lighting_hard_linear_omni.sc
+        fs_shadowmaps_color_lighting_hard_omni.sc
+        #fs_shadowmaps_color_lighting_main.sh
+        fs_shadowmaps_color_lighting_pcf.sc
+        fs_shadowmaps_color_lighting_pcf_csm.sc
+        fs_shadowmaps_color_lighting_pcf_linear.sc
+        fs_shadowmaps_color_lighting_pcf_linear_csm.sc
+        fs_shadowmaps_color_lighting_pcf_linear_omni.sc
+        fs_shadowmaps_color_lighting_pcf_omni.sc
+        fs_shadowmaps_color_lighting_vsm.sc
+        fs_shadowmaps_color_lighting_vsm_csm.sc
+        fs_shadowmaps_color_lighting_vsm_linear.sc
+        fs_shadowmaps_color_lighting_vsm_linear_csm.sc
+        fs_shadowmaps_color_lighting_vsm_linear_omni.sc
+        fs_shadowmaps_color_lighting_vsm_omni.sc
         fs_shadowmaps_color_texture.sc
         fs_shadowmaps_hblur.sc
         fs_shadowmaps_hblur_vsm.sc
@@ -541,23 +626,23 @@ fips_begin_app(16-shadowmaps cmdline)
         fs_shadowmaps_vblur.sc
         fs_shadowmaps_vblur_vsm.sc
         vs_shadowmaps_color.sc
-        vs_shadowmaps_color_lightning.sc
-        vs_shadowmaps_color_lightning_csm.sc
-        vs_shadowmaps_color_lightning_linear.sc
-        vs_shadowmaps_color_lightning_linear_csm.sc
-        vs_shadowmaps_color_lightning_linear_omni.sc
-        vs_shadowmaps_color_lightning_omni.sc
+        vs_shadowmaps_color_lighting.sc
+        vs_shadowmaps_color_lighting_csm.sc
+        vs_shadowmaps_color_lighting_linear.sc
+        vs_shadowmaps_color_lighting_linear_csm.sc
+        vs_shadowmaps_color_lighting_linear_omni.sc
+        vs_shadowmaps_color_lighting_omni.sc
         vs_shadowmaps_color_texture.sc
         vs_shadowmaps_depth.sc
         vs_shadowmaps_hblur.sc
         vs_shadowmaps_packdepth.sc
         vs_shadowmaps_packdepth_linear.sc
         vs_shadowmaps_texture.sc
-        vs_shadowmaps_texture_lightning.sc
+        vs_shadowmaps_texture_lighting.sc
         vs_shadowmaps_unpackdepth.sc
         vs_shadowmaps_vblur.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 endif()
 
@@ -565,7 +650,7 @@ fips_begin_app(17-drawstress cmdline)
     fips_dir(bgfx/examples/17-drawstress GROUP ".")
     fips_files(drawstress.cpp varying.def.sc)
     bgfx_shaders(FILES fs_drawstress.sc vs_drawstress.sc)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(18-ibl cmdline)
@@ -575,7 +660,7 @@ fips_begin_app(18-ibl cmdline)
         fs_ibl_mesh.sc   vs_ibl_mesh.sc
         fs_ibl_skybox.sc vs_ibl_skybox.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(19-oit cmdline)
@@ -590,13 +675,13 @@ fips_begin_app(19-oit cmdline)
         vs_oit.sc
         vs_oit_blit.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(20-nanovg cmdline)
     fips_dir(bgfx/examples/20-nanovg GROUP ".")
     fips_files(nanovg.cpp blendish.h)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(21-deferred cmdline)
@@ -614,13 +699,13 @@ fips_begin_app(21-deferred cmdline)
         vs_deferred_geom.sc
         vs_deferred_light.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(22-windows cmdline)
     fips_dir(bgfx/examples/22-windows GROUP ".")
     fips_files(windows.cpp)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(23-vectordisplay cmdline)
@@ -637,9 +722,12 @@ fips_begin_app(23-vectordisplay cmdline)
         fs_vectordisplay_fb.sc
         vs_vectordisplay_fb.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
+#
+# Need fix compute shader compilation
+#
 fips_begin_app(24-nbody cmdline)
     fips_dir(bgfx/examples/24-nbody GROUP ".")
     fips_files(nbody.cpp varying.def.sc)
@@ -649,14 +737,33 @@ fips_begin_app(24-nbody cmdline)
         fs_particle.sc
         vs_particle.sc
     )
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
 fips_begin_app(25-c99 cmdline)
     fips_dir(bgfx/examples/25-c99 GROUP ".")
     fips_files(helloworld.c)
-    fips_deps(bgfx bgfx-3rdparty bgfx-examples-common)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
+
+fips_begin_app(26-occlusion cmdline)
+    fips_dir(bgfx/examples/26-occlusion GROUP ".")
+    fips_files(occlusion.cpp)
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
+fips_end_app()
+
+fips_begin_app(27-terrain cmdline)
+    fips_dir(bgfx/examples/27-terrain GROUP ".")
+    fips_files(terrain.cpp varying.def.sc)
+    bgfx_shaders(FILES
+        vs_terrain.sc
+        vs_terrain_height_texture.sc
+        fs_terrain.sc
+    )
+    fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
+fips_end_app()
+
+
 endif() # NOT FIPS_IMPORT
 
 if (NOT FIPS_IMPORT)
