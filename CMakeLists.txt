@@ -306,7 +306,7 @@ fips_begin_lib(bgfx)
     # untested, note: OSX and iOS currently
     # automatically link against GL
     if (FIPS_MACOS)
-        fips_frameworks_osx(Cocoa IOKit CoreFoundation CoreVideo Carbon OpenGL Metal)
+        fips_frameworks_osx(Cocoa IOKit CoreFoundation CoreVideo Carbon OpenGL Metal QuartzCore)
     elseif (FIPS_WINDOWS)
         fips_libs(opengl32 psapi)
     elseif (FIPS_LINUX)
