@@ -241,6 +241,7 @@ fips_begin_lib(bgfx)
     # itself what to compile on each platform
     fips_files(
         bgfx.cpp bgfx_p.h
+        topology.cpp topology.h
         charset.h config.h
         glimports.h
         glcontext_eagl.h glcontext_eagl.mm
@@ -415,70 +416,71 @@ if (NOT FIPS_IMPORT)
 
 fips_ide_group(Samples)
 fips_include_directories(bgfx/examples/common)
+fips_include_directories(${CMAKE_CURRENT_BINARY_DIR}/)
 
-fips_begin_app(00-helloworld cmdline)
+fips_begin_app(00-helloworld windowed)
     fips_dir(bgfx/examples/00-helloworld GROUP ".")
     fips_files(helloworld.cpp logo.h)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(01-cubes cmdline)
+fips_begin_app(01-cubes windowed)
     fips_dir(bgfx/examples/01-cubes GROUP ".")
     fips_files(cubes.cpp varying.def.sc)
     fips_files(fs_cubes.sc vs_cubes.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(02-metaballs cmdline)
+fips_begin_app(02-metaballs windowed)
     fips_dir(bgfx/examples/02-metaballs GROUP ".")
     fips_files(metaballs.cpp varying.def.sc)
     bgfx_shaders(FILES fs_metaballs.sc vs_metaballs.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(03-raymarch cmdline)
+fips_begin_app(03-raymarch windowed)
     fips_dir(bgfx/examples/03-raymarch GROUP ".")
     fips_files(raymarch.cpp varying.def.sc)
     bgfx_shaders(FILES fs_raymarching.sc vs_raymarching.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(04-mesh cmdline)
+fips_begin_app(04-mesh windowed)
     fips_dir(bgfx/examples/04-mesh GROUP ".")
     fips_files(mesh.cpp varying.def.sc)
     bgfx_shaders(FILES fs_mesh.sc vs_mesh.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(05-instancing cmdline)
+fips_begin_app(05-instancing windowed)
     fips_dir(bgfx/examples/05-instancing GROUP ".")
     fips_files(instancing.cpp varying.def.sc)
     bgfx_shaders(FILES fs_instancing.sc vs_instancing.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(06-bump cmdline)
+fips_begin_app(06-bump windowed)
     fips_dir(bgfx/examples/06-bump GROUP ".")
     fips_files(bump.cpp varying.def.sc)
     bgfx_shaders(FILES fs_bump.sc vs_bump.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(07-callback cmdline)
+fips_begin_app(07-callback windowed)
     fips_dir(bgfx/examples/07-callback GROUP ".")
     fips_files(callback.cpp varying.def.sc)
     bgfx_shaders(FILES fs_callback.sc vs_callback.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(08-update cmdline)
+fips_begin_app(08-update windowed)
     fips_dir(bgfx/examples/08-update GROUP ".")
     fips_files(update.cpp varying.def.sc)
     bgfx_shaders(FILES fs_update.sc fs_update_cmp.sc vs_update.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(09-hdr cmdline)
+fips_begin_app(09-hdr windowed)
     fips_dir(bgfx/examples/09-hdr GROUP ".")
     fips_files(hdr.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -493,19 +495,19 @@ fips_begin_app(09-hdr cmdline)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(10-font cmdline)
+fips_begin_app(10-font windowed)
     fips_dir(bgfx/examples/10-font GROUP ".")
     fips_files(font.cpp)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(11-fontsdf cmdline)
+fips_begin_app(11-fontsdf windowed)
     fips_dir(bgfx/examples/11-fontsdf GROUP ".")
     fips_files(fontsdf.cpp)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(12-lod cmdline)
+fips_begin_app(12-lod windowed)
     fips_dir(bgfx/examples/12-lod GROUP ".")
     fips_files(lod.cpp varying.def.sc)
     bgfx_shaders(FILES fs_tree.sc vs_tree.sc)
@@ -513,7 +515,7 @@ fips_begin_app(12-lod cmdline)
 fips_end_app()
 
 if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
-fips_begin_app(13-stencil cmdline)
+fips_begin_app(13-stencil windowed)
     fips_dir(bgfx/examples/13-stencil GROUP ".")
     fips_files(stencil.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -533,7 +535,7 @@ fips_end_app()
 endif()
 
 if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
-fips_begin_app(14-shadowvolumes cmdline)
+fips_begin_app(14-shadowvolumes windowed)
     fips_dir(bgfx/examples/14-shadowvolumes GROUP ".")
     fips_files(shadowvolumes.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -565,7 +567,7 @@ fips_begin_app(14-shadowvolumes cmdline)
 fips_end_app()
 endif()
 
-fips_begin_app(15-shadowmaps-simple cmdline)
+fips_begin_app(15-shadowmaps-simple windowed)
     fips_dir(bgfx/examples/15-shadowmaps-simple GROUP ".")
     fips_files(shadowmaps_simple.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -582,7 +584,7 @@ fips_begin_app(15-shadowmaps-simple cmdline)
 fips_end_app()
 
 if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
-fips_begin_app(16-shadowmaps cmdline)
+fips_begin_app(16-shadowmaps windowed)
     fips_dir(bgfx/examples/16-shadowmaps GROUP ".")
     fips_files(shadowmaps.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -646,14 +648,14 @@ fips_begin_app(16-shadowmaps cmdline)
 fips_end_app()
 endif()
 
-fips_begin_app(17-drawstress cmdline)
+fips_begin_app(17-drawstress windowed)
     fips_dir(bgfx/examples/17-drawstress GROUP ".")
     fips_files(drawstress.cpp varying.def.sc)
     bgfx_shaders(FILES fs_drawstress.sc vs_drawstress.sc)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(18-ibl cmdline)
+fips_begin_app(18-ibl windowed)
     fips_dir(bgfx/examples/18-ibl GROUP ".")
     fips_files(ibl.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -663,7 +665,7 @@ fips_begin_app(18-ibl cmdline)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(19-oit cmdline)
+fips_begin_app(19-oit windowed)
     fips_dir(bgfx/examples/19-oit GROUP ".")
     fips_files(oit.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -678,13 +680,13 @@ fips_begin_app(19-oit cmdline)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(20-nanovg cmdline)
+fips_begin_app(20-nanovg windowed)
     fips_dir(bgfx/examples/20-nanovg GROUP ".")
     fips_files(nanovg.cpp blendish.h)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(21-deferred cmdline)
+fips_begin_app(21-deferred windowed)
     fips_dir(bgfx/examples/21-deferred GROUP ".")
     fips_files(deferred.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -702,13 +704,13 @@ fips_begin_app(21-deferred cmdline)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(22-windows cmdline)
+fips_begin_app(22-windows windowed)
     fips_dir(bgfx/examples/22-windows GROUP ".")
     fips_files(windows.cpp)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(23-vectordisplay cmdline)
+fips_begin_app(23-vectordisplay windowed)
     fips_dir(bgfx/examples/23-vectordisplay GROUP ".")
     fips_files(
         main.cpp
@@ -728,7 +730,7 @@ fips_end_app()
 #
 # Need fix compute shader compilation
 #
-fips_begin_app(24-nbody cmdline)
+fips_begin_app(24-nbody windowed)
     fips_dir(bgfx/examples/24-nbody GROUP ".")
     fips_files(nbody.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -740,19 +742,19 @@ fips_begin_app(24-nbody cmdline)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(25-c99 cmdline)
+fips_begin_app(25-c99 windowed)
     fips_dir(bgfx/examples/25-c99 GROUP ".")
     fips_files(helloworld.c)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(26-occlusion cmdline)
+fips_begin_app(26-occlusion windowed)
     fips_dir(bgfx/examples/26-occlusion GROUP ".")
     fips_files(occlusion.cpp)
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
 
-fips_begin_app(27-terrain cmdline)
+fips_begin_app(27-terrain windowed)
     fips_dir(bgfx/examples/27-terrain GROUP ".")
     fips_files(terrain.cpp varying.def.sc)
     bgfx_shaders(FILES
@@ -762,6 +764,45 @@ fips_begin_app(27-terrain cmdline)
     )
     fips_deps(bgfx bgfx-imgui bgfx-ib-compress bgfx-examples-common)
 fips_end_app()
+
+#
+# Force windows entry point to use main() with subsystem:windows
+#
+if(FIPS_MSVC)
+    set(bgfx_samples
+        00-helloworld
+        01-cubes
+        02-metaballs
+        03-raymarch
+        04-mesh
+        05-instancing
+        06-bump
+        07-callback
+        08-update
+        09-hdr
+        10-font
+        11-fontsdf
+        12-lod
+        13-stencil
+        14-shadowvolumes
+        15-shadowmaps-simple
+        16-shadowmaps
+        17-drawstress
+        18-ibl
+        19-oit
+        20-nanovg
+        21-deferred
+        22-windows
+        23-vectordisplay
+        24-nbody
+        25-c99
+        27-terrain
+        26-occlusion
+    )
+    foreach (bgfx_sample ${bgfx_samples})
+        set_target_properties(${bgfx_sample} PROPERTIES LINK_FLAGS "/ENTRY:\"mainCRTStartup\"")
+    endforeach()
+endif()
 
 
 endif() # NOT FIPS_IMPORT
