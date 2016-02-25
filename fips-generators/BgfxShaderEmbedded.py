@@ -2,10 +2,11 @@
 Wrap BGFX shader compiler as fips code generator (for code-embedded shaders)
 See: bgfx/scripts/shader_embeded.mk
 
+Version 3 - Threading shader compilation
 Version 2 - Added support to metal shader compilation
 Version 1 - Initial version
 """
-Version = 2
+Version = 3
 
 import os
 import platform
@@ -16,6 +17,7 @@ import yaml
 from mod import log
 from mod import util
 from mod import settings
+from threading import Thread
 
 # HACK: Find fips-deploy dir the hard way
 # TODO: Fips need pass to generators the fips-deploy dir ready to be used
@@ -62,12 +64,12 @@ def get_basename(input_path) :
     return os.path.splitext(os.path.basename(input_path))[0]
 
 #-------------------------------------------------------------------------------
-def run_shaderc(input_file, out_tmp, platform, type, subtype, bin_name) :
+def run_shaderc(input_file, out_tmp, platform, shader_type, subtype, bin_name) :
     cmd = [
         get_shaderc_path(),
         '-i', get_include_path(),
         '--platform', platform,
-        '--type', type
+        '--type', shader_type
     ]
     if subtype :
         cmd.extend(['-p', subtype])
@@ -78,8 +80,37 @@ def run_shaderc(input_file, out_tmp, platform, type, subtype, bin_name) :
         '-o', out_tmp,
         '--bin2c', bin_name
     ])
-    print ' '.join(cmd)
+    output = ' '.join(cmd) + "\n"
+    print output
     subprocess.call(cmd)
+
+class BuildShaderTask(Thread):
+    def __init__(self, input_file, fmt, platform, shader_type, sub_type, basename):
+        self.contents = ""
+        self.input_file = input_file
+        self.fmt = fmt
+        self.platform = platform
+        self.shader_type = shader_type
+        self.sub_type = sub_type
+        self.basename = basename
+        super(BuildShaderTask, self).__init__()
+
+    def run(self):
+        if os_name == 'windows' and self.fmt == 'dx9' and self.shader_type == 'compute':
+            self.contents = "// dx9 do not have compute\n"
+        elif os_name != 'windows' and self.fmt in ['dx9','dx11']:
+            self.contents  = ""
+            self.contents += "// built on {}, hlsl compiler not disponible\n".format(os_name)
+            self.contents += "static const uint8_t {}_{}[1] = {{ 0 }};\n\n".format(basename, self.fmt)
+        else:
+            out_file = tempfile.mktemp(prefix='bgfx_'+self.fmt+'_shaderc_')
+            run_shaderc(self.input_file, out_file, self.platform,
+                        self.shader_type, self.sub_type, self.basename+'_'+self.fmt)
+            f = open(out_file, 'r')
+            self.contents += f.read() + "\n"
+            f.close()
+            os.remove(out_file)
+
 
 #-------------------------------------------------------------------------------
 def generate(input_file, out_src, out_hdr) :
@@ -108,46 +139,25 @@ def generate(input_file, out_src, out_hdr) :
         include_path = get_include_path()
         basename = get_basename(input_file)
 
-        # call shader 4 times for glsl, dx9, dx11 and metal into tmp files
-        out_glsl = tempfile.mktemp(prefix='bgfx_glsl_shaderc_')
-        out_dx9  = tempfile.mktemp(prefix='bgfx_dx9_shaderc_')
-        out_dx11 = tempfile.mktemp(prefix='bgfx_dx11_shaderc_')
-        out_mtl  = tempfile.mktemp(prefix='bgfx_mtl_shaderc_')
+        glsl = BuildShaderTask(input_file, 'glsl', 'linux', shader_type, None, basename)
+        mtl = BuildShaderTask(input_file, 'mtl', 'ios', shader_type, None, basename)
+        dx9 = BuildShaderTask(input_file, 'dx9', 'windows', shader_type,
+                'vs_3_0' if shader_type == 'vertex' else 'ps_3_0', basename)
+        dx11 = BuildShaderTask(input_file, 'dx11', 'windows', shader_type,
+                'vs_4_0' if shader_type == 'vertex' else 
+                'cs_5_0' if shader_type == 'compute' else 'ps_4_0', basename)
 
-        # FIXME: the HLSL compiler is only supported on Windows platforms,
-        # thus we would get incomplete .bin.h files on non-windows platforms...
-        contents = ""
+        glsl.start()
+        mtl.start()
+        dx9.start()
+        dx11.start()
 
-        print "Compiling", os.path.basename(input_file), "as", shader_type, "..."
-        run_shaderc(input_file, out_glsl, 'linux', shader_type, None, basename+'_glsl')
-        with open(out_glsl, 'r') as f:
-            contents += f.read()
+        glsl.join()
+        mtl.join()
+        dx9.join()
+        dx11.join()
 
-        run_shaderc(input_file, out_mtl, 'ios', shader_type, None, basename+'_mtl')
-        with open(out_mtl, 'r') as f:
-            contents += f.read()
-
-        if os_name == 'windows':
-            if shader_type != 'compute':
-                run_shaderc(input_file, out_dx9, 'windows', shader_type,
-                    'vs_3_0' if shader_type == 'vertex' else
-                    'ps_3_0', basename+'_dx9')
-                with open(out_dx9, 'r') as f:
-                    contents += f.read()
-
-            run_shaderc(input_file, out_dx11, 'windows', shader_type,
-                    'vs_4_0' if shader_type == 'vertex' else 
-                    'cs_5_0' if shader_type == 'compute' else
-                    'ps_4_0', basename+'_dx11')
-            with open(out_dx11, 'r') as f:
-                contents += f.read()
-        else:
-            contents += "\n"
-            contents += "// built on {}, hlsl compiler not disponible\n".format(os_name)
-            contents += "static const uint8_t {}_dx9[1] = {{ 0 }};\n\n".format(basename)
-            contents += "// built on {}, hlsl compiler not disponible\n".format(os_name)
-            contents += "static const uint8_t {}_dx11[1] = {{ 0 }};\n\n".format(basename)
-
+        contents = glsl.contents + mtl.contents + dx9.contents + dx11.contents
         if len(contents):
             with open(out_hdr, 'w') as f:
                 contents = "// #version:{}#\n".format(Version) + contents
