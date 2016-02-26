@@ -24,7 +24,7 @@ macro(bgfx_shaders)
 
     foreach (cur_file ${_bs_FILES})
         get_filename_component(out_file ${cur_file} NAME_WE)
-        fips_generate(TYPE BgfxShaderEmbedded FROM ${cur_file} HEADER ${_bs_OUTPUT}${out_file}.bin.h REQUIRES shaderc)
+        fips_generate(TYPE BgfxShaderEmbedded FROM ${cur_file} HEADER ${_bs_OUTPUT}${out_file}.bin.h REQUIRES shaderc OUT_OF_SOURCE)
     endforeach()
 endmacro()
 
