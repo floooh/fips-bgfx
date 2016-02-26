@@ -71,7 +71,7 @@ macro(bgfx_app name)
     endif()
 
     if (NOT _bs_DEPS)
-        set(_bs_DEPS bgfx-imgui bgfx-ib-compress bgfx-examples-common)
+        set(_bs_DEPS bgfx-examples-common bgfx-imgui bgfx-ib-compress)
     endif()
 
     file(TO_CMAKE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${_bs_PATH} _bs_relative)
