@@ -204,6 +204,8 @@ fips_begin_lib(bgfx)
     endif()
     fips_src(bgfx/include/bgfx GROUP "include")
 
+    fips_src(bx/include GROUP "bx")
+
     if (FIPS_MACOS)
         fips_frameworks_osx(Cocoa IOKit CoreFoundation CoreVideo Carbon OpenGL Metal QuartzCore)
     elseif (FIPS_WINDOWS)
@@ -278,12 +280,6 @@ fips_begin_lib(bgfx-examples-common)
     endif()
 fips_end_lib()
 
-#-[ BX ]------------------------------------------------------------------------
-
-file(GLOB_RECURSE BX_FILES bx/include/bx/*.h bx/include/compat/*.h bx/include/tinystl/*.h)
-fips_files(${BX_FILES})
-source_group("bx" FILES ${BX_FILES})
-
 #-[ Samples ]-------------------------------------------------------------------
 if (NOT FIPS_IMPORT)
     fips_ide_group(Samples)
@@ -322,8 +318,5 @@ if (NOT FIPS_IMPORT)
         bgfx_app(16-shadowmaps)
     endif()
 
-endif() # NOT FIPS_IMPORT
-
-if (NOT FIPS_IMPORT)
     fips_finish()
 endif()

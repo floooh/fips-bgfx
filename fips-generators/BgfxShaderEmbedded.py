@@ -101,7 +101,7 @@ class BuildShaderTask(Thread):
         elif os_name != 'windows' and self.fmt in ['dx9','dx11']:
             self.contents  = ""
             self.contents += "// built on {}, hlsl compiler not disponible\n".format(os_name)
-            self.contents += "static const uint8_t {}_{}[1] = {{ 0 }};\n\n".format(basename, self.fmt)
+            self.contents += "static const uint8_t {}_{}[1] = {{ 0 }};\n\n".format(self.basename, self.fmt)
         else:
             out_file = tempfile.mktemp(prefix='bgfx_'+self.fmt+'_shaderc_')
             run_shaderc(self.input_file, out_file, self.platform,
