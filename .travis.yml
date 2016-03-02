@@ -10,6 +10,7 @@ install:
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
     - sudo apt-get install -qq cmake
     - sudo apt-get install -qq ccache
+    - sudo apt-get install libXxf86vm-dev
 
 script:
     - git --version
@@ -20,6 +21,6 @@ script:
     - python fips gen
     - python fips build
     # run tests
-    - python fips run texturec
-    - python fips run shaderc
-    - python fips run geometryc
+    #- python fips run texturec
+    #- python fips run shaderc
+    #- python fips run geometryc
