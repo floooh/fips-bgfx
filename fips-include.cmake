@@ -49,7 +49,7 @@ endmacro()
 #   If no PATH is provided we assume this is a bgfx sample and will use the
 #   default bgfx sample path structure: bgfx/examples/<name>
 #
-macro(bgfx_app name)
+function(bgfx_app name)
     set(options)
     set(oneValueArgs PATH)
     set(multiValueArgs GROUP DEPS)
@@ -98,4 +98,4 @@ macro(bgfx_app name)
     if (FIPS_MSVC)
         set_target_properties(${name} PROPERTIES LINK_FLAGS "/ENTRY:\"mainCRTStartup\"")
     endif()
-endmacro()
+endfunction()
