@@ -1,4 +1,7 @@
 # fips-bgfx
+
+[![Build Status](https://travis-ci.org/fungos/fips-bgfx.svg?branch=travis-ci)](https://travis-ci.org/fungos/fips-bgfx)
+
 fipsified version of bgfx (https://github.com/bkaradzic/bgfx)
 
 #### Get fips and clone fips-bgfx:
