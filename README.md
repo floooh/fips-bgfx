@@ -1,6 +1,6 @@
 # fips-bgfx
 
-[![Build Status](https://travis-ci.org/fungos/fips-bgfx.svg?branch=travis-ci)](https://travis-ci.org/fungos/fips-bgfx)
+[![Build Status](https://travis-ci.org/floooh/fips-bgfx.svg?branch=master)](https://travis-ci.org/floooh/fips-bgfx)
 
 fipsified version of bgfx (https://github.com/bkaradzic/bgfx)
 
