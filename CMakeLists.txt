@@ -76,16 +76,6 @@ endif()
 
 fips_ide_group(3rdparty)
 
-fips_begin_lib(bgfx-imgui)
-    set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "")
-    fips_src(bgfx/3rdparty/ocornut-imgui)
-fips_end_lib()
-
-fips_begin_lib(bgfx-ib-compress)
-    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
-    fips_src(bgfx/3rdparty/ib-compress)
-fips_end_lib()
-
 fips_begin_lib(bgfx-tinyexr)
     add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DMINIZ_NO_TIME)
     fips_src(bgfx/3rdparty/tinyexr)
@@ -165,6 +155,19 @@ if (FIPS_MSVC)
 endif()
 
 endif() # NOT CMAKE_TOOLCHAIN_FILE
+
+#
+# These are used in examples and should be cross-compiled
+#
+fips_begin_lib(bgfx-imgui)
+    set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "")
+    fips_src(bgfx/3rdparty/ocornut-imgui)
+fips_end_lib()
+
+fips_begin_lib(bgfx-ib-compress)
+    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+    fips_src(bgfx/3rdparty/ib-compress)
+fips_end_lib()
 
 #-------------------------------------------------------------------------------
 fips_ide_group("") # remove grouping
