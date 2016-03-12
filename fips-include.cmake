@@ -99,3 +99,21 @@ function(bgfx_app name)
         set_target_properties(${name} PROPERTIES LINK_FLAGS "/ENTRY:\"mainCRTStartup\"")
     endif()
 endfunction()
+
+#-------------------------------------------------------------------------------
+#   bgfx_include_compat()
+#
+#   Helper macro to include multi platform compatibility headers
+#
+macro(bgfx_include_compat)
+    set(FIPS_BGFX_PATH ${FIPS_ROOT_DIR}/../fips-bgfx/)
+    if (FIPS_MACOS)
+        include_directories(${FIPS_BGFX_PATH}/bx/include/compat/osx)
+    elseif (FIPS_IOS)
+        include_directories(${FIPS_BGFX_PATH}/bx/include/compat/ios)
+    elseif (FIPS_PNACL)
+        include_directories(${FIPS_BGFX_PATH}/bx/include/compat/nacl)
+    elseif (FIPS_WINDOWS)
+        include_directories(${FIPS_BGFX_PATH}/bx/include/compat/msvc)
+    endif()
+endmacro()
