@@ -35,8 +35,9 @@ fips_ide_group(Tools)
 fips_begin_app(shaderc cmdline)
     fips_include_directories(bgfx/3rdparty/glsl-optimizer/src/glsl)
     fips_src(bgfx/tools/shaderc GROUP "shaderc")
-    fips_files_ex(bgfx/src vertexdecl.* GROUP "bgfx")
+    fips_files_ex(bgfx/src vertexdecl.* shader_spirv.* GROUP "bgfx")
     fips_deps(bgfx-fcpp bgfx-glsl-optimizer)
+    fips_deps(OSDependent OGLCompiler SPIRV hlsl glslang) # from fips-glslang
     if (FIPS_WINDOWS)
         add_definitions(-D__STDC__ -D__STDC_VERSION__=199901L -Dstrdup=_strdup -Dalloca=_alloca -Disascii=__isascii)
         fips_include_directories(bgfx/3rdparty/glsl-optimizer/include/c99)
@@ -46,11 +47,16 @@ fips_begin_app(shaderc cmdline)
     endif()
 fips_end_app()
 
+# HACK: we need some includes that aren't exported from fips-glslang
+# and glslang can't export them because some files cause conflicts with us and examples stop compiling ie. common.h 
+target_include_directories(shaderc PUBLIC ../fips-glslang/glslang/glslang/Include ../fips-glslang/glslang)
+
+
 fips_begin_app(texturec cmdline)
     fips_include_directories(bx/include bgfx/include bgfx/src)
     fips_src(bgfx/tools/texturec GROUP "texturec")
     fips_files_ex(bgfx/src image.* GROUP "bgfx")
-    fips_deps(bgfx-edtaa3 bgfx-libsquish bgfx-etc1 bgfx-etc2 bgfx-nvtt bgfx-pvrtc bgfx-tinyexr)
+    fips_deps(bgfx-edtaa3 bgfx-libsquish bgfx-etc1 bgfx-etc2 bgfx-nvtt bgfx-pvrtc bgfx-iqa)
 fips_end_app()
 
 fips_begin_app(geometryc cmdline)
@@ -76,9 +82,15 @@ endif()
 
 fips_ide_group(3rdparty)
 
-fips_begin_lib(bgfx-tinyexr)
+#fips_begin_lib(bgfx-tinyexr)
+#    add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DMINIZ_NO_TIME)
+#    fips_src(bgfx/3rdparty/tinyexr)
+#fips_end_lib()
+
+fips_begin_lib(bgfx-iqa)
     add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DMINIZ_NO_TIME)
-    fips_src(bgfx/3rdparty/tinyexr)
+    include_directories(bgfx/3rdparty/iqa/include)
+    fips_src(bgfx/3rdparty/iqa)
 fips_end_lib()
 
 fips_begin_lib(bgfx-libsquish)
@@ -234,6 +246,7 @@ endif()
 #-------------------------------------------------------------------------------
 fips_begin_lib(bgfx-examples-common)
     include_directories(bgfx/3rdparty/dxsdk/include)
+    fips_include_directories(bgfx/examples/common)
     add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS)
     fips_src(bgfx/examples/common GROUP ".")
     fips_src(bgfx/examples/common/imgui GROUP "imgui")
@@ -314,6 +327,10 @@ if (NOT FIPS_IMPORT)
     bgfx_app(25-c99)
     bgfx_app(26-occlusion)
     bgfx_app(27-terrain)
+    bgfx_app(28-wireframe)
+    bgfx_app(29-debugdraw)
+    bgfx_app(30-picking)
+    bgfx_app(31-rsm)
 
     if (NOT FIPS_EMSCRIPTEN AND NOT FIPS_PNACL)
         bgfx_app(13-stencil)

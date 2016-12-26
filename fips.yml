@@ -63,6 +63,18 @@ run:
         cwd: bgfx/examples/runtime
     27-terrain:
         cwd: bgfx/examples/runtime
+    28-wireframe:
+        cwd: bgfx/examples/runtime
+    29-debugdraw:
+        cwd: bgfx/examples/runtime
+    30-picking:
+        cwd: bgfx/examples/runtime
+    31-rsm:
+        cwd: bgfx/examples/runtime
+
+imports:
+     fips-glslang:
+         git: https://github.com/fungos/fips-glslang.git
 
 exports:
     header-dirs:
