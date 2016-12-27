@@ -59,6 +59,11 @@ fips_begin_app(texturec cmdline)
     fips_deps(bgfx-edtaa3 bgfx-libsquish bgfx-etc1 bgfx-etc2 bgfx-nvtt bgfx-pvrtc bgfx-iqa)
 fips_end_app()
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    # Required for Ubuntu 16.04 to use STB library: https://github.com/nothings/stb/issues/280
+    target_link_libraries(texturec gcc_s gcc)
+endif()
+
 fips_begin_app(geometryc cmdline)
     fips_include_directories(bx/include bgfx/include bgfx/3rdparty bgfx/examples/common)
     fips_src(bgfx/tools/geometryc GROUP "geometryc")
