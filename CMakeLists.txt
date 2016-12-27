@@ -37,7 +37,7 @@ fips_begin_app(shaderc cmdline)
     fips_src(bgfx/tools/shaderc GROUP "shaderc")
     fips_files_ex(bgfx/src vertexdecl.* shader_spirv.* GROUP "bgfx")
     fips_deps(bgfx-fcpp bgfx-glsl-optimizer)
-    fips_deps(OSDependent OGLCompiler SPIRV hlsl glslang) # from fips-glslang
+    fips_deps(OGLCompiler SPIRV hlsl glslang OSDependent) # from fips-glslang
     if (FIPS_WINDOWS)
         add_definitions(-D__STDC__ -D__STDC_VERSION__=199901L -Dstrdup=_strdup -Dalloca=_alloca -Disascii=__isascii)
         fips_include_directories(bgfx/3rdparty/glsl-optimizer/include/c99)
@@ -51,18 +51,18 @@ fips_end_app()
 # and glslang can't export them because some files cause conflicts with us and examples stop compiling ie. common.h 
 target_include_directories(shaderc PUBLIC ../fips-glslang/glslang/glslang/Include ../fips-glslang/glslang)
 
-
 fips_begin_app(texturec cmdline)
     fips_include_directories(bx/include bgfx/include bgfx/src)
     fips_src(bgfx/tools/texturec GROUP "texturec")
     fips_files_ex(bgfx/src image.* GROUP "bgfx")
+
+    if (FIPS_GCC) 
+        # Required for Ubuntu 16.04 to use STB library: https://github.com/nothings/stb/issues/280
+        fips_deps(gcc_s gcc)
+    endif()
     fips_deps(bgfx-edtaa3 bgfx-libsquish bgfx-etc1 bgfx-etc2 bgfx-nvtt bgfx-pvrtc bgfx-iqa)
 fips_end_app()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    # Required for Ubuntu 16.04 to use STB library: https://github.com/nothings/stb/issues/280
-    target_link_libraries(texturec gcc_s gcc)
-endif()
 
 fips_begin_app(geometryc cmdline)
     fips_include_directories(bx/include bgfx/include bgfx/3rdparty bgfx/examples/common)
