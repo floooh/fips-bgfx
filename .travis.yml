@@ -14,7 +14,7 @@ addons:
       - g++-5
       - libXxf86vm-dev
 install:
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50; fi
 
 script:
     - cmake --version
