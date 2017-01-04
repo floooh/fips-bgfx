@@ -37,7 +37,7 @@ fips_begin_app(shaderc cmdline)
     fips_src(bgfx/tools/shaderc GROUP "shaderc")
     fips_files_ex(bgfx/src vertexdecl.* shader_spirv.* GROUP "bgfx")
     fips_deps(bgfx-fcpp bgfx-glsl-optimizer)
-    fips_deps(OGLCompiler SPIRV hlsl glslang OSDependent) # from fips-glslang
+    fips_deps(glslang SPIRV hlsl OSDependent OGLCompiler) # from fips-glslang
     if (FIPS_WINDOWS)
         add_definitions(-D__STDC__ -D__STDC_VERSION__=199901L -Dstrdup=_strdup -Dalloca=_alloca -Disascii=__isascii)
         fips_include_directories(bgfx/3rdparty/glsl-optimizer/include/c99)

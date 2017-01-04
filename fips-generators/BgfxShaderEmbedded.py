@@ -81,7 +81,7 @@ def run_shaderc(input_file, out_tmp, platform, shader_type, subtype, bin_name) :
         '--bin2c', bin_name
     ])
     output = ' '.join(cmd) + "\n"
-    print output
+    print(output)
     subprocess.call(cmd)
 
 class BuildShaderTask(Thread):
