@@ -10,13 +10,14 @@ addons:
     packages:
       - cmake
       - cmake-data
-      - gcc-5
-      - g++-5
+      - gcc-6
+      - g++-6
       - libXxf86vm-dev
 install:
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50; fi
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 50; fi
 
 script:
+    - g++ --version
     - cmake --version
     - git --version
     # setup and check fips
